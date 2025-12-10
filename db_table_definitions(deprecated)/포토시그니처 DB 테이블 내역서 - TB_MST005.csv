@@ -1,0 +1,12 @@
+,,,,
+,테이블 내역,테이블 DESC,,
+,TB_MST005,푸시 알림 테스트,,
+,,,,
+,COL,DESC,TYPE,KEY
+,SEQ_NO,순번,int,KEY
+,NOTICE_DATE,공지사항 일자,varchar(10),KEY
+,NOTICE_TITLE,공자사항 타이틀,varchar(100),KEY
+,NOTICE_COMMENT,공지사항 내용,varchar(500),
+,CREATE_USER,생성자,varchar(20),
+,CREATE_DATE,생성일,datetime,
+,UPDATE_DATE,수정일,datetime,

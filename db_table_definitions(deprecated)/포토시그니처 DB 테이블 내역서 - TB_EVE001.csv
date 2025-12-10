@@ -1,0 +1,14 @@
+,,,,
+,테이블 내역,테이블 DESC,,
+,TB_EVE001,이벤트 쿠폰 관리,,
+,,,,
+,COL,DESC,TYPE,KEY
+,EVENT_HDD,기기 ID,nvarchar(20),KEY
+,SEQ,순번,int,KEY
+,COUPON_N,쿠폰 번호,nvarchar(50),KEY
+,USE_YN,사용여부,nchar(1),
+,USED_SHOP,사용매장,nvarchar(50),
+,USE_TIP,쿠폰 금액,int,
+,CREATE_DATE,생성일,datetime,
+,UPDATE_DATE,수정일,datetime,
+,END_DATE,사용기간,datetime,

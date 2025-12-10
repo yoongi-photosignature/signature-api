@@ -1,0 +1,16 @@
+,,,,
+,테이블 내역,테이블 DESC,,
+,TB_CAD001,카드 매출 내역,,
+,,,,
+,COL,DESC,TYPE,KEY
+,USER_ID,기기 ID,varchar(30),KEY
+,SEQ_NO,순번,int,KEY
+,WORK_DATE,날짜,varchar(10),KEY
+,PRINT_CNT,촬영수,int,
+,CARD_NO,카드 번호,varchar(30),
+,RECEIPT_PAY,결제 금액,int,
+,RECEIPT_DATE,결제일,varchar(30),
+,RECEIPT_NO,영수 번호,varchar(30),
+,RECEIPT_TAX_TXT,부가세,varchar(200),
+,CANCEL_YN,취소 여부,bit,
+,IN_DATE,생성일,datetime,

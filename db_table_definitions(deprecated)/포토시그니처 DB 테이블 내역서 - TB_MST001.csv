@@ -1,0 +1,16 @@
+,,,,
+,테이블 내역,테이블 DESC,,
+,TB_MST001,키오스크 계정 관리,,
+,,,,
+,COL,DESC,TYPE,KEY
+,USER_ID,기기 ID,varchar(30),KEY
+,HDD_SR,기기 HDD S/N,varchar(15),KEY
+,USER_NAME,기기명(매장명 + 순번),varchar(50),KEY
+,PGM_TYPE,프로그램 타입,varchar(20),
+,USER_GROUP,매장 그룹,varchar(30),
+,USER_LEVEL,아이디 레벨,varchar(5),
+,PASSWORD,비번,varchar(20),
+,THEMA,팝업(캐릭터) 서비스 여부,varchar(5),
+,CREATE_DATE,생성일,datetime,
+,UPDATE_DATE,최근 접속일,datetime,
+,SORT,정렬,int,

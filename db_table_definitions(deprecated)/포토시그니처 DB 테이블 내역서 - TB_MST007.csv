@@ -1,0 +1,8 @@
+,,,,
+,테이블 내역,테이블 DESC,,
+,TB_MST007,환율 관리,,
+,,,,
+,COL,DESC,TYPE,KEY
+,WORK_MM,월,varchar(7),KEY
+,NATION_CODE,국가코드,char(3),KEY
+,EX_RATE,환율,"numeric(15, 7)",

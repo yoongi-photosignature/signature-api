@@ -1,0 +1,20 @@
+,,,,
+,테이블 내역,테이블 DESC,,
+,TB_LOG001,기기 로그 관리,,
+,,,,
+,COL,DESC,TYPE,KEY
+,SEQ_NO,순번,int,KEY
+,USER_ID,기기 ID,varchar(20),KEY
+,WORK_DATE,날짜,nchar(10),
+,FUNC_NAME,LOG 위치,varchar(50),
+,FUNC_DETAIL,LOG 상세,varchar(500),
+,KOLAVO,팝업 코드(케릭터),nchar(10),
+,BGIMG,배경,int,
+,IMGFILLTER,필터,int,
+,IMGFRAMES,프레임,varchar(10),
+,QRON,QR 선택 여부,varchar(10),
+,ERRLOG,Error LOG Exception 처리된 내용,varchar(500),
+,BIGO1,,varchar(50),
+,BIGO2,,varchar(50),
+,BIGO3,,varchar(50),
+,CREATE_DATE,생성일,datetime,

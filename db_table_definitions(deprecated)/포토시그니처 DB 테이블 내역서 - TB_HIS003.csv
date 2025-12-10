@@ -1,0 +1,24 @@
+,,,,
+,테이블 내역,테이블 DESC,"테이블의 컬럼 네임이 다소 다르게 정의 되었음
+초기 운영과 다르게 컨텐츠가 추가 되면서 컬럼의미와는 다른 컬럼을 쓰고 있음.",
+,TB_HIS003,매출 이력 관리,,
+,,,,
+,COL,DESC,TYPE,KEY
+,USER_ID,기기 ID,varchar(15),KEY
+,SEQ_NO,순번,int,KEY
+,WORK_DATE,날짜,varchar(10),KEY
+,RUN_QTY,촬영 팀,int,
+,SALES_QTY,출력 수,int,
+,SALES_AMOUNT,판매 금액,int,
+,DANGA,판매 단가,int,
+,COLOR4,배경색,int,
+,COLORW,팝업(케릭터),int,
+,FILLTER4,필터번호,int,
+,FILLTERW,카드 여부(0:현금. 1:카드),int,
+,RESHOOT,재촬영(사용안함),int,
+,QRSHOOT,QR 선택 여부,int,
+,ROUL_AMOUNT,룰렛 할인 적용 금액,int,
+,USE_COUPON,쿠폰사용,int,
+,FRAMES,프레임 종류,varchar(10),
+,CREATE_DATE,생성일,datetime,
+,UPDATE_DATE,수정일,datetime,

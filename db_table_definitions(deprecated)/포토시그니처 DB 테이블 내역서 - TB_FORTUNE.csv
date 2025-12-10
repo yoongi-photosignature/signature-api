@@ -1,0 +1,8 @@
+,,,,
+,테이블 내역,테이블 DESC,,
+,TB_FORTUNE,운세 관리,,
+,,,,
+,COL,DESC,TYPE,KEY
+,FORTUNE_ID,운세 종류,varchar(10),KEY
+,FORTUNE_NO,운세 번호,int,KEY
+,FORTUNE_NOTE,운세 내용,varchar(300),

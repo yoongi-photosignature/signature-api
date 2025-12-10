@@ -1,0 +1,10 @@
+,,,,
+,테이블 내역,테이블 DESC,,
+,TB_MST002,프린트 용지 잔량 관리,,
+,,,,
+,COL,DESC,TYPE,KEY
+,USER_ID,기기 ID,varchar(30),KEY
+,PRINTING_QTY,프린트 용지 잔량,int,
+,DOWN_FLAG,프로그램 업데이트 여부,nchar(1),
+,CREATE_DATE,생성일,datetime,
+,UPDATE_DATE,수정일,datetime,

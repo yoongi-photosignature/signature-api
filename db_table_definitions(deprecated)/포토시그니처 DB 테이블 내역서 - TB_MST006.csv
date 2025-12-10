@@ -1,0 +1,15 @@
+,,,,
+,테이블 내역,테이블 DESC,,
+,TB_MST006,팝업(캐릭터) 관리,,
+,,,,
+,COL,DESC,TYPE,KEY
+,CODE_GRP,구분,nvarchar(10),KEY
+,CODE_ID,캐릭터 SEQ,nvarchar(10),KEY
+,CODE_NAME,케릭터 코드,nvarchar(10),
+,CODE_DESC,케릭터 명,nvarchar(50),
+,FD_ROOT,생성자,nvarchar(200),
+,SORT,정렬,int,
+,STORE_RATE,매장 수익률,"numeric(5, 2)",
+,CORP_RATE,본사 수익률,"numeric(5, 2)",
+,POPUP_RATE,팝법스토어 계약요율,"numeric(5, 2)",
+,KENT,연예인 적용 여부,char(1),

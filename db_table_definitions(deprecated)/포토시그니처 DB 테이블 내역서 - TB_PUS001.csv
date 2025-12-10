@@ -1,0 +1,11 @@
+,,,,
+,테이블 내역,테이블 DESC,,
+,TB_PUS001,푸시 알림 테스트,,
+,,,,
+,COL,DESC,TYPE,KEY
+,TARGET_NAME,그룹 ID,nvarchar(50),KEY
+,PUSH_DATE,날짜,nvarchar(20),KEY
+,TEST1,테스트1,int,
+,TEST2,테스트2,nvarchar(50),
+,CREATE_DATE,생성자,datetime,
+,UPDATE_DATE,생성일,datetime,

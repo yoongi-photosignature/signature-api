@@ -1,0 +1,14 @@
+,,,,
+,테이블 내역,테이블 DESC,"월별 매출 조회(달력형태) 시
+날짜 단위 조회 속도 향상을 위해 생성",
+,TB_SAL002,매출 SUMMRY,,
+,,,,
+,COL,DESC,TYPE,KEY
+,USER_ID,기기 ID,varchar(15),KEY
+,SEQ_NO,순번,int,KEY
+,WORK_DATE,날짜,varchar(10),KEY
+,RUN_QTY,촬영팀,int,
+,SALES_QTY,프린트 수량,int,
+,SALES_AMOUNT,결제금액,int,
+,CREATE_DATE,생성일,datetime,
+,UPDATE_DATE,수정일,datetime,

@@ -1,0 +1,16 @@
+,,,,
+,테이블 내역,테이블 DESC,,
+,TB_MST004,매장 그룹 관리,,
+,,,,
+,COL,DESC,TYPE,KEY
+,GRADE,그룹 등급,varchar(30),KEY
+,GROUP_ID,그룹 ID,varchar(30),KEY
+,GROUP_PASS,그룹 비번,varchar(30),
+,GROUP_NAME,그룹 명,varchar(40),
+,GROUP_PHONE,점주 연락처,varchar(10),
+,NATION_CODE,국가코드,varchar(10),
+,STORE_RATE,매장 서버비 비율,"numeric(3, 1)",
+,TOKEN_KEY,푸시용 토큰 테스트,varchar(200),
+,VAT,부가세 여부,char(1),
+,CREATE_DATE,생성일,datetime,
+,UPDATE_DATE,수정일,datetime,
