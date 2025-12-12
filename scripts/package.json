@@ -1,0 +1,15 @@
+{
+  "name": "photosignature-db-scripts",
+  "version": "1.0.0",
+  "description": "MongoDB setup scripts for PhotoSignature",
+  "type": "module",
+  "scripts": {
+    "setup": "node setup-db.js",
+    "setup:dry-run": "DRY_RUN=true node setup-db.js",
+    "seed:sales": "node seed-sales.js"
+  },
+  "dependencies": {
+    "mongodb": "^6.12.0",
+    "dotenv": "^16.4.7"
+  }
+}
