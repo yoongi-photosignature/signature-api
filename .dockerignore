@@ -1,0 +1,46 @@
+# Dependencies
+node_modules
+
+# Build output (will be built in container)
+dist
+
+# Development files
+*.md
+.git
+.gitignore
+.env
+.env.*
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Scripts (seeding, setup)
+scripts
+
+# Certificates (handled by Secret Manager)
+*.pem
+X509-cert*
+
+# Documentation
+docs
+
+# Test files
+*.test.ts
+*.spec.ts
+__tests__
+coverage
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs
+
+# Misc
+.claude
+connection_string
