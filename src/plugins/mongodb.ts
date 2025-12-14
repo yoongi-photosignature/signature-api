@@ -37,7 +37,7 @@ async function mongoPlugin(fastify: FastifyInstance) {
       fastify.log.info('MongoDB connection closed');
     });
   } catch (error) {
-    fastify.log.error('MongoDB connection failed:', error);
+    fastify.log.error(error, 'MongoDB connection failed');
     throw error;
   }
 }

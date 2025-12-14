@@ -1,0 +1,77 @@
+swagger: "2.0"
+info:
+  title: Signature API Gateway
+  version: "1.0.0"
+schemes:
+  - https
+produces:
+  - application/json
+x-google-backend:
+  address: https://signature-api-yareqqxdwq-du.a.run.app
+  deadline: 30.0
+security:
+  - api_key: []
+securityDefinitions:
+  api_key:
+    type: apiKey
+    name: x-api-key
+    in: header
+paths:
+  /:
+    get:
+      operationId: root
+      responses:
+        200:
+          description: OK
+  /health:
+    get:
+      operationId: health
+      responses:
+        200:
+          description: OK
+  /api/sales:
+    post:
+      operationId: createSale
+      responses:
+        201:
+          description: Created
+  /api/sales/{id}:
+    get:
+      operationId: getSale
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+  /api/sales/{id}/refund:
+    put:
+      operationId: refundSale
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+  /api/settlement/monthly:
+    get:
+      operationId: monthlySettlement
+      responses:
+        200:
+          description: OK
+  /api/settlement/domestic:
+    get:
+      operationId: domesticSettlement
+      responses:
+        200:
+          description: OK
+  /api/settlement/overseas:
+    get:
+      operationId: overseasSettlement
+      responses:
+        200:
+          description: OK

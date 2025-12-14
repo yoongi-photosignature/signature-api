@@ -59,6 +59,12 @@ gcloud secrets versions list mongodb-uri
 gcloud secrets versions list mongodb-cert
 ```
 
+### 2.4 Cloud Run 기본 서비스 계정에 Secret 접근 권한 부여
+
+```bash
+gcloud projects add-iam-policy-binding $(gcloud config get-value project) --member="serviceAccount:$(gcloud projects describe $(gcloud config get-value project) --format='value(projectNumber)')-compute@developer.gserviceaccount.com" --role="roles/secretmanager.secretAccessor"
+```
+
 ---
 
 ## 3. Workload Identity Federation 설정
@@ -69,8 +75,6 @@ gcloud secrets versions list mongodb-cert
 ### 3.1 서비스 계정 생성
 
 ```bash
-PROJECT_ID=$(gcloud config get-value project)
-
 gcloud iam service-accounts create github-actions \
   --display-name="GitHub Actions Service Account"
 ```
@@ -78,26 +82,24 @@ gcloud iam service-accounts create github-actions \
 ### 3.2 서비스 계정에 권한 부여
 
 ```bash
-SA_EMAIL="github-actions@${PROJECT_ID}.iam.gserviceaccount.com"
-
 # Cloud Run 배포 권한
-gcloud projects add-iam-policy-binding $PROJECT_ID \
-  --member="serviceAccount:${SA_EMAIL}" \
+gcloud projects add-iam-policy-binding $(gcloud config get-value project) \
+  --member="serviceAccount:github-actions@$(gcloud config get-value project).iam.gserviceaccount.com" \
   --role="roles/run.admin"
 
 # Artifact Registry 푸시 권한
-gcloud projects add-iam-policy-binding $PROJECT_ID \
-  --member="serviceAccount:${SA_EMAIL}" \
+gcloud projects add-iam-policy-binding $(gcloud config get-value project) \
+  --member="serviceAccount:github-actions@$(gcloud config get-value project).iam.gserviceaccount.com" \
   --role="roles/artifactregistry.writer"
 
 # Secret Manager 접근 권한
-gcloud projects add-iam-policy-binding $PROJECT_ID \
-  --member="serviceAccount:${SA_EMAIL}" \
+gcloud projects add-iam-policy-binding $(gcloud config get-value project) \
+  --member="serviceAccount:github-actions@$(gcloud config get-value project).iam.gserviceaccount.com" \
   --role="roles/secretmanager.secretAccessor"
 
 # Service Account 사용 권한 (Cloud Run에서 사용)
-gcloud projects add-iam-policy-binding $PROJECT_ID \
-  --member="serviceAccount:${SA_EMAIL}" \
+gcloud projects add-iam-policy-binding $(gcloud config get-value project) \
+  --member="serviceAccount:github-actions@$(gcloud config get-value project).iam.gserviceaccount.com" \
   --role="roles/iam.serviceAccountUser"
 ```
 
@@ -123,22 +125,15 @@ gcloud iam workload-identity-pools providers create-oidc github-provider \
 ### 3.5 서비스 계정에 Workload Identity 바인딩
 
 ```bash
-# YOUR_GITHUB_ORG/YOUR_REPO를 실제 값으로 변경
-GITHUB_REPO="YOUR_GITHUB_ORG/signature-mongodb"
-
-gcloud iam service-accounts add-iam-policy-binding $SA_EMAIL \
-  --role="roles/iam.workloadIdentityUser" \
-  --member="principalSet://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/github-pool/attribute.repository/${GITHUB_REPO}"
+gcloud iam service-accounts add-iam-policy-binding "github-actions@$(gcloud config get-value project).iam.gserviceaccount.com" --role="roles/iam.workloadIdentityUser" --member="principalSet://iam.googleapis.com/projects/$(gcloud projects describe $(gcloud config get-value project) --format='value(projectNumber)')/locations/global/workloadIdentityPools/github-pool/attribute.repository/yoongi-photosignature/signature-api"
 ```
 
 ### 3.6 Provider 전체 이름 확인
 
 ```bash
 # GitHub Secrets에 저장할 값
-PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format='value(projectNumber)')
-
-echo "WIF_PROVIDER: projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
-echo "WIF_SERVICE_ACCOUNT: ${SA_EMAIL}"
+echo "WIF_PROVIDER: projects/$(gcloud projects describe $(gcloud config get-value project) --format='value(projectNumber)')/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+echo "WIF_SERVICE_ACCOUNT: github-actions@$(gcloud config get-value project).iam.gserviceaccount.com"
 ```
 
 ---
@@ -160,56 +155,247 @@ GitHub 저장소 → Settings → Secrets and variables → Actions에서 다음
 ### 5.1 로컬에서 Docker 이미지 빌드 및 푸시
 
 ```bash
-PROJECT_ID=$(gcloud config get-value project)
-REGION=asia-northeast3
-
-# 이미지 빌드
-docker build -t ${REGION}-docker.pkg.dev/${PROJECT_ID}/signature/signature-api:latest .
+# 이미지 빌드 (Cloud Run은 linux/amd64 필요)
+docker build --platform linux/amd64 -t asia-northeast3-docker.pkg.dev/$(gcloud config get-value project)/signature/signature-api:latest .
 
 # Artifact Registry 인증
-gcloud auth configure-docker ${REGION}-docker.pkg.dev
+gcloud auth configure-docker asia-northeast3-docker.pkg.dev
 
 # 이미지 푸시
-docker push ${REGION}-docker.pkg.dev/${PROJECT_ID}/signature/signature-api:latest
+docker push asia-northeast3-docker.pkg.dev/$(gcloud config get-value project)/signature/signature-api:latest
 ```
 
 ### 5.2 Cloud Run 배포
 
 ```bash
 gcloud run deploy signature-api \
-  --image ${REGION}-docker.pkg.dev/${PROJECT_ID}/signature/signature-api:latest \
-  --region ${REGION} \
+  --image asia-northeast3-docker.pkg.dev/$(gcloud config get-value project)/signature/signature-api:latest \
+  --region asia-northeast3 \
   --platform managed \
-  --allow-unauthenticated \
+  --no-allow-unauthenticated \
   --port 8080 \
   --memory 512Mi \
   --cpu 1 \
   --min-instances 1 \
   --max-instances 10 \
-  --set-secrets "MONGODB_URI=mongodb-uri:latest" \
-  --update-secrets "/secrets/mongodb-cert/cert.pem=mongodb-cert:latest" \
+  --set-secrets "MONGODB_URI=mongodb-uri:latest,/secrets/mongodb-cert/cert.pem=mongodb-cert:latest" \
   --set-env-vars "NODE_ENV=production,MONGODB_DB_NAME=photosignature,MONGODB_CERT_PATH=/secrets/mongodb-cert/cert.pem"
 ```
 
 ---
 
-## 6. 배포 확인
+## 6. API Gateway 설정 (키오스크 인증)
+
+API Gateway를 통해 API Key 기반 인증을 적용합니다.
+
+```
+키오스크 → [API Gateway] → Cloud Run
+            (API Key 검증)    (실제 로직)
+```
+
+### 6.1 API 활성화
 
 ```bash
-# 서비스 URL 확인
-gcloud run services describe signature-api --region asia-northeast3 --format 'value(status.url)'
+gcloud services enable apigateway.googleapis.com servicecontrol.googleapis.com servicemanagement.googleapis.com
+```
+
+### 6.2 API Gateway용 서비스 계정 생성
+
+```bash
+gcloud iam service-accounts create api-gateway --display-name="API Gateway Service Account"
+
+# Cloud Run 호출 권한 부여
+gcloud run services add-iam-policy-binding signature-api --region=asia-northeast3 --member="serviceAccount:api-gateway@$(gcloud config get-value project).iam.gserviceaccount.com" --role=roles/run.invoker
+```
+
+### 6.3 OpenAPI 스펙 파일 생성
+
+`api-spec.yaml` 파일 생성:
+
+```yaml
+swagger: "2.0"
+info:
+  title: Signature API Gateway
+  version: "1.0.0"
+schemes:
+  - https
+produces:
+  - application/json
+x-google-backend:
+  address: CLOUD_RUN_URL
+  deadline: 30.0
+security:
+  - api_key: []
+securityDefinitions:
+  api_key:
+    type: apiKey
+    name: x-api-key
+    in: header
+paths:
+  /:
+    get:
+      operationId: root
+      responses:
+        200:
+          description: OK
+  /health:
+    get:
+      operationId: health
+      responses:
+        200:
+          description: OK
+  /api/sales:
+    post:
+      operationId: createSale
+      responses:
+        201:
+          description: Created
+  /api/sales/{id}:
+    get:
+      operationId: getSale
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+  /api/sales/{id}/refund:
+    put:
+      operationId: refundSale
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+  /api/settlement/monthly:
+    get:
+      operationId: monthlySettlement
+      responses:
+        200:
+          description: OK
+  /api/settlement/domestic:
+    get:
+      operationId: domesticSettlement
+      responses:
+        200:
+          description: OK
+  /api/settlement/overseas:
+    get:
+      operationId: overseasSettlement
+      responses:
+        200:
+          description: OK
+```
+
+### 6.4 Cloud Run URL로 스펙 파일 업데이트
+
+```bash
+# Cloud Run URL 가져오기
+CLOUD_RUN_URL=$(gcloud run services describe signature-api --region asia-northeast3 --format 'value(status.url)')
+
+# 스펙 파일의 CLOUD_RUN_URL 치환
+sed -i '' "s|CLOUD_RUN_URL|${CLOUD_RUN_URL}|g" api-spec.yaml
+```
+
+### 6.5 API Config 생성
+
+```bash
+gcloud api-gateway api-configs create config-v1 \
+  --api=signature-api \
+  --openapi-spec=api-spec.yaml \
+  --project=$(gcloud config get-value project) \
+  --backend-auth-service-account=api-gateway@$(gcloud config get-value project).iam.gserviceaccount.com
+```
+
+> **처음 실행 시 API 먼저 생성:**
+> ```bash
+> gcloud api-gateway apis create signature-api --project=$(gcloud config get-value project)
+> ```
+
+### 6.6 Gateway 배포
+
+```bash
+gcloud api-gateway gateways create signature-gateway \
+  --api=signature-api \
+  --api-config=config-v1 \
+  --location=asia-northeast1 \
+  --project=$(gcloud config get-value project)
+```
+
+### 6.7 Managed Service 활성화
+
+```bash
+# API의 managed service 이름 확인
+gcloud api-gateway apis describe signature-api --format='value(managedService)'
+
+# managed service 활성화 (위에서 확인한 값 사용)
+gcloud services enable $(gcloud api-gateway apis describe signature-api --format='value(managedService)')
+```
+
+### 6.8 API Key 생성
+
+```bash
+# API Keys 서비스 활성화
+gcloud services enable apikeys.googleapis.com
+
+# API Key 생성
+gcloud beta services api-keys create --display-name="Kiosk API Key" --project=$(gcloud config get-value project)
+```
+
+### 6.9 API Key에 API 제한 설정
+
+```bash
+# 생성된 API Key의 UID 확인
+gcloud beta services api-keys list --format="table(uid,displayName)"
+
+# API Key에 우리 API만 허용하도록 제한 (UID를 실제 값으로 교체)
+gcloud beta services api-keys update <API_KEY_UID> --api-target=service=$(gcloud api-gateway apis describe signature-api --format='value(managedService)')
+```
+
+### 6.10 Gateway URL 확인
+
+```bash
+gcloud api-gateway gateways describe signature-gateway --location=asia-northeast1 --format='value(defaultHostname)'
+```
+
+### 6.11 테스트
+
+```bash
+# Gateway URL과 API Key를 변수로 설정
+GATEWAY_URL=$(gcloud api-gateway gateways describe signature-gateway --location=asia-northeast1 --format='value(defaultHostname)')
+API_KEY=$(gcloud beta services api-keys list --format="value(keyString)" --limit=1)
 
 # 헬스체크
-curl https://signature-api-xxxxx.asia-northeast3.run.app/health
+curl -H "x-api-key: ${API_KEY}" "https://${GATEWAY_URL}/health"
 ```
 
 ---
 
-## 7. 로그 확인
+## 7. 배포 확인
+
+```bash
+# Cloud Run URL 확인 (직접 접근 불가, API Gateway 통해서만 접근)
+gcloud run services describe signature-api --region asia-northeast3 --format 'value(status.url)'
+
+# API Gateway URL 확인
+gcloud api-gateway gateways describe signature-gateway --location=asia-northeast1 --format='value(defaultHostname)'
+
+# 헬스체크 (API Gateway 통해)
+curl -H "x-api-key: $(gcloud beta services api-keys list --format='value(keyString)' --limit=1)" "https://$(gcloud api-gateway gateways describe signature-gateway --location=asia-northeast1 --format='value(defaultHostname)')/health"
+```
+
+---
+
+## 8. 로그 확인
 
 ```bash
 # 실시간 로그 스트리밍
-gcloud run logs tail signature-api --region asia-northeast3
+gcloud beta run services logs tail signature-api --region asia-northeast3
 
 # 특정 시간대 로그 조회
 gcloud logging read "resource.type=cloud_run_revision AND resource.labels.service_name=signature-api" --limit 100
@@ -217,9 +403,9 @@ gcloud logging read "resource.type=cloud_run_revision AND resource.labels.servic
 
 ---
 
-## 8. 환경별 배포 (선택사항)
+## 9. 환경별 배포 (선택사항)
 
-### 8.1 staging 환경 추가
+### 9.1 staging 환경 추가
 
 `.github/workflows/deploy-staging.yml` 생성:
 
@@ -234,7 +420,7 @@ env:
   # ... (나머지 동일)
 ```
 
-### 8.2 프로덕션 배포 승인 추가
+### 9.2 프로덕션 배포 승인 추가
 
 GitHub Environments 설정에서 `production` 환경 생성 후 required reviewers 추가.
 
