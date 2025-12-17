@@ -194,3 +194,259 @@ export interface OverseasSettlement {
   serverFee: string;
   transactionCount: number;
 }
+
+// ============================================================
+// Exchange Rate Types
+// ============================================================
+
+export interface ExchangeRateDocument {
+  _id: string; // date string: "2025-01-15"
+  baseCurrency: string;
+  rates: Record<string, number>;
+  source: string;
+  apiEndpoint: string;
+  fetchedAt: Date;
+}
+
+export interface ExchangeRateResponse {
+  date: string;
+  baseCurrency: string;
+  rates: Record<string, number>;
+  source: string;
+  fetchedAt: string;
+}
+
+// ============================================================
+// Popup Types
+// ============================================================
+
+export type PopupStatus = 'SCHEDULED' | 'ACTIVE' | 'ENDED';
+export type DiscountType = 'ROULETTE' | 'COUPON' | 'FIXED' | 'NONE';
+
+export interface PopupDocument {
+  _id: string;
+  name: string;
+  character?: {
+    id: string;
+    name: string;
+    code: string;
+  };
+  status: PopupStatus;
+  period: {
+    start: Date;
+    end: Date;
+  };
+  endedAt?: Date;
+  countries: string[];
+  revenueConfig: {
+    storeRate: number;
+    corpRate: number;
+    licenseRate: number;
+  };
+  discountConfig?: {
+    type: DiscountType;
+    rouletteRates?: number[];
+    maxDiscount?: number;
+  };
+  pricing?: Record<string, { price: number; printCount: number }>;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreatePopupInput {
+  _id: string;
+  name: string;
+  character?: {
+    id: string;
+    name: string;
+    code: string;
+  };
+  status: PopupStatus;
+  period: {
+    start: string;
+    end: string;
+  };
+  countries: string[];
+  revenueConfig: {
+    storeRate: number;
+    corpRate: number;
+    licenseRate: number;
+  };
+  discountConfig?: {
+    type: DiscountType;
+    rouletteRates?: number[];
+    maxDiscount?: string;
+  };
+  pricing?: Record<string, { price: string; printCount: number }>;
+}
+
+export interface UpdatePopupInput {
+  name?: string;
+  character?: {
+    id: string;
+    name: string;
+    code: string;
+  };
+  period?: {
+    start: string;
+    end: string;
+  };
+  countries?: string[];
+  revenueConfig?: {
+    storeRate: number;
+    corpRate: number;
+    licenseRate: number;
+  };
+  discountConfig?: {
+    type: DiscountType;
+    rouletteRates?: number[];
+    maxDiscount?: string;
+  };
+  pricing?: Record<string, { price: string; printCount: number }>;
+}
+
+// ============================================================
+// Store Types
+// ============================================================
+
+export type GroupGrade = 'MASTER' | 'HIGH' | 'MID' | 'LOW';
+
+export interface StoreDocument {
+  _id: string;
+  name: string;
+  group: {
+    id: string;
+    name: string;
+    grade: GroupGrade;
+  };
+  country: {
+    code: string;
+    name: string;
+    currency: Currency;
+  };
+  owner?: {
+    phone: string;
+  };
+  settlement: {
+    serverFeeRate: number;
+    vatEnabled: boolean;
+  };
+  devices: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateStoreInput {
+  _id: string;
+  name: string;
+  group: {
+    id: string;
+    name: string;
+    grade: GroupGrade;
+  };
+  country: {
+    code: string;
+    name: string;
+    currency: Currency;
+  };
+  owner?: {
+    phone: string;
+  };
+  settlement: {
+    serverFeeRate: number;
+    vatEnabled: boolean;
+  };
+  devices?: string[];
+}
+
+export interface UpdateStoreInput {
+  name?: string;
+  group?: {
+    id: string;
+    name: string;
+    grade: GroupGrade;
+  };
+  country?: {
+    code: string;
+    name: string;
+    currency: Currency;
+  };
+  owner?: {
+    phone: string;
+  };
+  settlement?: {
+    serverFeeRate: number;
+    vatEnabled: boolean;
+  };
+  devices?: string[];
+}
+
+// ============================================================
+// Device Types
+// ============================================================
+
+export interface DeviceDocument {
+  _id: string;
+  name: string;
+  hddSerial?: string;
+  store: {
+    id: string;
+    name: string;
+  };
+  country: {
+    code: string;
+    name: string;
+    currency: Currency;
+  };
+  programType: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateDeviceInput {
+  _id: string;
+  name: string;
+  hddSerial?: string;
+  store: {
+    id: string;
+    name: string;
+  };
+  country: {
+    code: string;
+    name: string;
+    currency: Currency;
+  };
+  programType: string;
+}
+
+export interface UpdateDeviceInput {
+  name?: string;
+  hddSerial?: string;
+  store?: {
+    id: string;
+    name: string;
+  };
+  country?: {
+    code: string;
+    name: string;
+    currency: Currency;
+  };
+  programType?: string;
+}
+
+// ============================================================
+// Config Types
+// ============================================================
+
+export interface ConfigDocument {
+  _id: string;
+  values?: Record<string, unknown>;
+  domestic?: number;
+  overseas?: number;
+  provider?: string;
+  endpoint?: string;
+  updateFrequency?: string;
+  lastUpdated?: Date;
+  updatedAt: Date;
+  updatedBy: string;
+}

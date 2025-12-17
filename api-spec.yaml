@@ -29,6 +29,8 @@ paths:
       responses:
         200:
           description: OK
+
+  # Sales API
   /api/sales:
     post:
       operationId: createSale
@@ -57,6 +59,8 @@ paths:
       responses:
         200:
           description: OK
+
+  # Settlement API
   /api/settlement/monthly:
     get:
       operationId: monthlySettlement
@@ -72,6 +76,204 @@ paths:
   /api/settlement/overseas:
     get:
       operationId: overseasSettlement
+      responses:
+        200:
+          description: OK
+
+  # Exchange Rates API
+  /api/exchange-rates:
+    get:
+      operationId: getLatestExchangeRates
+      responses:
+        200:
+          description: OK
+  /api/exchange-rates/{date}:
+    get:
+      operationId: getExchangeRatesByDate
+      parameters:
+        - name: date
+          in: path
+          required: true
+          type: string
+          format: date
+      responses:
+        200:
+          description: OK
+
+  # Popups API
+  /api/popups:
+    get:
+      operationId: getPopups
+      responses:
+        200:
+          description: OK
+    post:
+      operationId: createPopup
+      responses:
+        201:
+          description: Created
+  /api/popups/active:
+    get:
+      operationId: getActivePopups
+      responses:
+        200:
+          description: OK
+  /api/popups/{id}:
+    get:
+      operationId: getPopupById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+    put:
+      operationId: updatePopup
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+    delete:
+      operationId: deletePopup
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+  /api/popups/{id}/status:
+    put:
+      operationId: updatePopupStatus
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+
+  # Stores API
+  /api/stores:
+    get:
+      operationId: getStores
+      responses:
+        200:
+          description: OK
+    post:
+      operationId: createStore
+      responses:
+        201:
+          description: Created
+  /api/stores/{id}:
+    get:
+      operationId: getStoreById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+    put:
+      operationId: updateStore
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+    delete:
+      operationId: deleteStore
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+
+  # Devices API
+  /api/devices:
+    get:
+      operationId: getDevices
+      responses:
+        200:
+          description: OK
+    post:
+      operationId: createDevice
+      responses:
+        201:
+          description: Created
+  /api/devices/{id}:
+    get:
+      operationId: getDeviceById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+    put:
+      operationId: updateDevice
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+    delete:
+      operationId: deleteDevice
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+
+  # Config API
+  /api/config:
+    get:
+      operationId: getAllConfig
+      responses:
+        200:
+          description: OK
+  /api/config/{key}:
+    get:
+      operationId: getConfigByKey
+      parameters:
+        - name: key
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+    put:
+      operationId: updateConfig
+      parameters:
+        - name: key
+          in: path
+          required: true
+          type: string
       responses:
         200:
           description: OK
