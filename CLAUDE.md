@@ -122,7 +122,13 @@ Kiosks (1000+) → GCP API Gateway (x-api-key 인증) → Cloud Run → MongoDB 
 | `config` | System configuration |
 
 ### Documentation
-See `docs/db-architecture/INDEX.md` for complete database specifications.
+- **Start here**: `docs/INDEX.md` - 전체 문서 인덱스
+- **DB specs**: `docs/db-architecture/INDEX.md` - 데이터베이스 명세
+- **Data collection**: `docs/photosignature-data-collection-design.md` - 데이터 수집 설계
+
+**Rules:**
+- 작업 시 관련 문서가 필요하면 `docs/INDEX.md`를 먼저 읽고 필요한 문서 참고
+- 새 문서 작성 시 반드시 `docs/INDEX.md` 업데이트
 
 ---
 

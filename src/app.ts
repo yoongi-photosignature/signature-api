@@ -7,6 +7,11 @@ import { popupsRoutes } from './modules/popups/popups.routes.js';
 import { storesRoutes } from './modules/stores/stores.routes.js';
 import { devicesRoutes } from './modules/devices/devices.routes.js';
 import { configRoutes } from './modules/config/config.routes.js';
+import { sessionsRoutes } from './modules/sessions/sessions.routes.js';
+import { eventsRoutes } from './modules/events/events.routes.js';
+import { performanceRoutes } from './modules/performance/performance.routes.js';
+import { errorsRoutes } from './modules/errors/errors.routes.js';
+import { dailySummaryRoutes } from './modules/daily-summary/daily-summary.routes.js';
 import { setupErrorHandler } from './utils/error-handler.js';
 
 export async function buildApp(): Promise<FastifyInstance> {
@@ -37,6 +42,11 @@ export async function buildApp(): Promise<FastifyInstance> {
   await app.register(storesRoutes, { prefix: '/api/stores' });
   await app.register(devicesRoutes, { prefix: '/api/devices' });
   await app.register(configRoutes, { prefix: '/api/config' });
+  await app.register(sessionsRoutes, { prefix: '/api/sessions' });
+  await app.register(eventsRoutes, { prefix: '/api/events' });
+  await app.register(performanceRoutes, { prefix: '/api/performance' });
+  await app.register(errorsRoutes, { prefix: '/api/errors' });
+  await app.register(dailySummaryRoutes, { prefix: '/api/daily-summary' });
 
   // Health check
   app.get('/health', async () => ({
@@ -57,6 +67,11 @@ export async function buildApp(): Promise<FastifyInstance> {
       stores: '/api/stores',
       devices: '/api/devices',
       config: '/api/config',
+      sessions: '/api/sessions',
+      events: '/api/events',
+      performance: '/api/performance',
+      errors: '/api/errors',
+      dailySummary: '/api/daily-summary',
     },
   }));
 
