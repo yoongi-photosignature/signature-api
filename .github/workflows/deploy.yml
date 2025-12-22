@@ -39,16 +39,17 @@ jobs:
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
       - name: Build and Push Docker image
+        id: build
         run: |
           IMAGE_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/signature/${{ env.SERVICE_NAME }}:${{ github.sha }}"
           docker build -t $IMAGE_TAG .
           docker push $IMAGE_TAG
-          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+          echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
 
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy ${{ env.SERVICE_NAME }} \
-            --image ${{ env.IMAGE_TAG }} \
+            --image ${{ steps.build.outputs.image_tag }} \
             --region ${{ env.REGION }} \
             --platform managed \
             --no-allow-unauthenticated \
@@ -67,4 +68,4 @@ jobs:
           SERVICE_URL=$(gcloud run services describe ${{ env.SERVICE_NAME }} --region ${{ env.REGION }} --format 'value(status.url)')
           echo "### 🚀 Deployed to Cloud Run" >> $GITHUB_STEP_SUMMARY
           echo "Service URL: $SERVICE_URL" >> $GITHUB_STEP_SUMMARY
-          echo "Image: ${{ env.IMAGE_TAG }}" >> $GITHUB_STEP_SUMMARY
+          echo "Image: ${{ steps.build.outputs.image_tag }}" >> $GITHUB_STEP_SUMMARY

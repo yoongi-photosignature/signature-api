@@ -7,9 +7,13 @@ dist/
 # Environment variables
 .env
 
-# Certificates & Secrets
+# Secrets folder
+secrets/
+
+# Certificates & Secrets (legacy, 루트에 있을 경우)
 *.pem
-connection_string
+*.key
+*.crt
 
 # IDE
 .idea/

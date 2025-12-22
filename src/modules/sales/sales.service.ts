@@ -1,16 +1,42 @@
 import { SalesRepository } from './sales.repository.js';
-import { CreateSaleInput, RefundInput, SaleDocument } from '../../types/index.js';
+import { CreateSaleInput, RefundInput, SaleDocument, SaleTimeDimension } from '../../types/index.js';
 import { toDecimal128, fromDecimal128 } from '../../utils/decimal128.js';
 
 export class SalesService {
   constructor(private repository: SalesRepository) {}
 
+  /**
+   * ISO 주차 계산 (1-53)
+   */
+  private getISOWeek(date: Date): number {
+    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    const dayNum = d.getUTCDay() || 7;
+    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+  }
+
+  /**
+   * 시간 차원 생성 (집계 최적화용)
+   */
+  private createTimeDimension(date: Date): SaleTimeDimension {
+    return {
+      year: date.getFullYear(),
+      month: date.getMonth() + 1,
+      week: this.getISOWeek(date),
+      dayOfWeek: date.getDay(),
+      hour: date.getHours(),
+      quarter: Math.ceil((date.getMonth() + 1) / 3),
+    };
+  }
+
   async createSale(input: CreateSaleInput): Promise<string> {
     const now = new Date();
+    const timestamp = new Date(input.timestamp);
 
     // Build sale object, only including fields that have values
     const sale: Record<string, unknown> = {
-      timestamp: new Date(input.timestamp),
+      timestamp,
       store: input.store,
       device: input.device,
       country: input.country,
@@ -23,6 +49,8 @@ export class SalesService {
       payment: input.payment,
       status: 'COMPLETED',
       product: input.product,
+      // 시간 차원 자동 생성
+      timeDimension: this.createTimeDimension(timestamp),
       createdAt: now,
       updatedAt: now,
     };
@@ -57,6 +85,31 @@ export class SalesService {
       if (Object.keys(services).length > 0) {
         sale.services = services;
       }
+    }
+
+    // 신규 필드: sessionId
+    if (input.sessionId) {
+      sale.sessionId = input.sessionId;
+    }
+
+    // 신규 필드: amounts (확장된 금액 구조)
+    if (input.amounts) {
+      sale.amounts = {
+        gross: toDecimal128(input.amounts.gross),
+        discount: toDecimal128(input.amounts.discount),
+        tax: toDecimal128(input.amounts.tax),
+        net: toDecimal128(input.amounts.net),
+        margin: toDecimal128(input.amounts.margin),
+        currency: input.amounts.currency,
+      };
+    }
+
+    // 신규 필드: settlement (정산 정보)
+    if (input.settlement) {
+      sale.settlement = {
+        status: input.settlement.status,
+        scheduledDate: new Date(input.settlement.scheduledDate),
+      };
     }
 
     const id = await this.repository.create(sale as Omit<SaleDocument, '_id'>);
@@ -121,6 +174,21 @@ export class SalesService {
           used: sale.services.ai.used,
           fee: fromDecimal128(sale.services.ai.fee),
         } : undefined,
+      } : undefined,
+      // 신규 필드 직렬화
+      amounts: sale.amounts ? {
+        gross: fromDecimal128(sale.amounts.gross),
+        discount: fromDecimal128(sale.amounts.discount),
+        tax: fromDecimal128(sale.amounts.tax),
+        net: fromDecimal128(sale.amounts.net),
+        margin: fromDecimal128(sale.amounts.margin),
+        currency: sale.amounts.currency,
+      } : undefined,
+      settlement: sale.settlement ? {
+        status: sale.settlement.status,
+        scheduledDate: sale.settlement.scheduledDate?.toISOString?.() ?? sale.settlement.scheduledDate,
+        processedAt: sale.settlement.processedAt?.toISOString?.() ?? sale.settlement.processedAt,
+        batchId: sale.settlement.batchId,
       } : undefined,
     };
   }

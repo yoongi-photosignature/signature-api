@@ -1,3 +1,12 @@
+// UUID v4 패턴
+const UUID_PATTERN = '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$';
+// 금액 패턴 (소수점 포함)
+const DECIMAL_PATTERN = '^-?\\d+(\\.\\d+)?$';
+// 안전한 ID 패턴 (NoSQL Injection 방지)
+const SAFE_ID_PATTERN = '^[a-zA-Z0-9_-]+$';
+// 국가 코드 패턴
+const COUNTRY_CODE_PATTERN = '^[A-Z]{2,3}$';
+
 export const createSaleSchema = {
   body: {
     type: 'object',
@@ -8,26 +17,26 @@ export const createSaleSchema = {
         type: 'object',
         required: ['id', 'name'],
         properties: {
-          id: { type: 'string' },
-          name: { type: 'string' },
-          groupId: { type: 'string' },
-          groupName: { type: 'string' },
+          id: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
+          name: { type: 'string', maxLength: 100 },
+          groupId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
+          groupName: { type: 'string', maxLength: 100 },
         },
       },
       device: {
         type: 'object',
         required: ['id', 'name'],
         properties: {
-          id: { type: 'string' },
-          name: { type: 'string' },
+          id: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
+          name: { type: 'string', maxLength: 100 },
         },
       },
       country: {
         type: 'object',
         required: ['code', 'name'],
         properties: {
-          code: { type: 'string' },
-          name: { type: 'string' },
+          code: { type: 'string', pattern: COUNTRY_CODE_PATTERN },
+          name: { type: 'string', maxLength: 50 },
         },
       },
       amount: { type: 'string', pattern: '^\\d+(\\.\\d+)?$' },
@@ -41,8 +50,22 @@ export const createSaleSchema = {
         required: ['type'],
         properties: {
           type: { type: 'string', enum: ['CASH', 'CARD'] },
-          receiptNo: { type: 'string' },
-          pgProvider: { type: 'string' },
+          receiptNo: { type: 'string', maxLength: 50 },
+          pgProvider: { type: 'string', maxLength: 20 },
+          // 필수 추가 필드 (취소/환불에 필요)
+          pgTransactionId: { type: 'string', maxLength: 100 },
+          approvalNo: { type: 'string', maxLength: 20 },
+          // 권장 추가 필드
+          installmentMonths: { type: 'integer', minimum: 0, maximum: 36 },
+          terminalId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
+          // 카드 메타데이터 (PG 제공값만 저장)
+          cardBrand: { type: 'string', maxLength: 20 },
+          cardType: { type: 'string', enum: ['CREDIT', 'DEBIT', 'PREPAID'] },
+          cardIssuer: { type: 'string', maxLength: 50 },
+          cardLast4: { type: 'string', pattern: '^[0-9]{4}$' },
+          // 거래 상세 (디버깅/분석용)
+          pgResponseCode: { type: 'string', maxLength: 10 },
+          pgErrorMessage: { type: 'string', maxLength: 500 },
         },
       },
       product: {
@@ -50,9 +73,9 @@ export const createSaleSchema = {
         required: ['type', 'frameId', 'frameCategory', 'printCount', 'isAdditionalPrint'],
         properties: {
           type: { type: 'string', enum: ['PHOTO', 'BEAUTY', 'AI', 'FORTUNE'] },
-          frameId: { type: 'string' },
+          frameId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
           frameCategory: { type: 'string', enum: ['3CUT', '4CUT', '6CUT', '8CUT'] },
-          printCount: { type: 'integer', minimum: 1 },
+          printCount: { type: 'integer', minimum: 1, maximum: 100 },
           isAdditionalPrint: { type: 'boolean' },
         },
       },
@@ -61,7 +84,7 @@ export const createSaleSchema = {
         properties: {
           roulette: { type: 'string', pattern: '^\\d+(\\.\\d+)?$' },
           coupon: { type: 'string', pattern: '^\\d+(\\.\\d+)?$' },
-          couponCode: { type: 'string' },
+          couponCode: { type: 'string', pattern: '^[A-Z0-9-]+$', maxLength: 30 },
         },
       },
       popup: {
@@ -98,6 +121,28 @@ export const createSaleSchema = {
               fee: { type: 'string', pattern: '^\\d+(\\.\\d+)?$' },
             },
           },
+        },
+      },
+      // 신규 필드 (Phase 1)
+      sessionId: { type: 'string', pattern: UUID_PATTERN },
+      amounts: {
+        type: 'object',
+        required: ['gross', 'discount', 'tax', 'net', 'margin', 'currency'],
+        properties: {
+          gross: { type: 'string', pattern: DECIMAL_PATTERN },
+          discount: { type: 'string', pattern: DECIMAL_PATTERN },
+          tax: { type: 'string', pattern: DECIMAL_PATTERN },
+          net: { type: 'string', pattern: DECIMAL_PATTERN },
+          margin: { type: 'string', pattern: DECIMAL_PATTERN },
+          currency: { type: 'string', enum: ['KRW', 'JPY', 'USD', 'VND'] },
+        },
+      },
+      settlement: {
+        type: 'object',
+        required: ['status', 'scheduledDate'],
+        properties: {
+          status: { type: 'string', enum: ['PENDING', 'SETTLED', 'DISPUTED'] },
+          scheduledDate: { type: 'string', format: 'date' },
         },
       },
     },
