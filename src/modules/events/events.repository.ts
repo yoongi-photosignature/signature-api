@@ -3,7 +3,7 @@ import { EventDocument, EventType } from '../../types/index.js';
 
 export interface EventFilter {
   sessionId?: string;
-  deviceId?: string;
+  kioskId?: string;
   eventType?: EventType;
   startTime?: Date;
   endTime?: Date;
@@ -73,7 +73,7 @@ export class EventsRepository {
     const query: Filter<EventDocument> = {};
 
     if (filter.sessionId) query.sessionId = filter.sessionId;
-    if (filter.deviceId) query.deviceId = filter.deviceId;
+    if (filter.kioskId) query.kioskId = filter.kioskId;
     if (filter.eventType) query.eventType = filter.eventType;
 
     if (filter.startTime || filter.endTime) {

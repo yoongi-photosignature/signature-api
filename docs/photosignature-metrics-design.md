@@ -21,7 +21,7 @@
 ```json
 {
   "_id": "ObjectId(...)",
-  "device_id": "K001-DEVICE-01",      // Unique Key (Serial Number)
+  "kiosk_id": "K001-DEVICE-01",      // Unique Key (Serial Number)
   "device_name": "홍대점 1호기",
   
   // 매장 그룹 정보 (변경 빈도가 낮으므로 Embedding)

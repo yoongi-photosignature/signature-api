@@ -16,7 +16,7 @@
   - [x] Service 구현 (`src/modules/sessions/sessions.service.ts`)
   - [x] 인덱스 생성 스크립트 (`scripts/create-indexes.js`)
     - `{ sessionId: 1 }` (unique)
-    - `{ deviceId: 1, startedAt: -1 }`
+    - `{ kioskId: 1, startedAt: -1 }`
     - `{ storeId: 1, startedAt: -1 }`
     - `{ groupId: 1, startedAt: -1 }`
     - `{ startedAt: -1, status: 1 }`
@@ -63,7 +63,7 @@
   - [x] Routes 구현 (`src/modules/events/events.routes.ts`)
   - [x] 인덱스 생성 스크립트 추가
     - `{ sessionId: 1, sequenceNo: 1 }` (unique)
-    - `{ deviceId: 1, timestamp: -1 }`
+    - `{ kioskId: 1, timestamp: -1 }`
     - `{ eventType: 1, timestamp: -1 }`
 
 - [x] **이벤트 배치 API** ✅ 완료 (2025-01-19)
@@ -112,7 +112,7 @@
   - [x] Service 구현 (`src/modules/performance/performance.service.ts`)
   - [x] Routes 구현 (`src/modules/performance/performance.routes.ts`)
   - [x] 인덱스 생성 스크립트 추가
-    - `{ deviceId: 1, metricType: 1, timestamp: -1 }`
+    - `{ kioskId: 1, metricType: 1, timestamp: -1 }`
     - `{ sessionId: 1, metricType: 1 }` (sparse)
     - `{ success: 1, metricType: 1, timestamp: -1 }`
 
@@ -127,7 +127,7 @@
   - [x] Service 구현 (`src/modules/errors/errors.service.ts`)
   - [x] Routes 구현 (`src/modules/errors/errors.routes.ts`)
   - [x] 인덱스 생성 스크립트 추가
-    - `{ deviceId: 1, timestamp: -1 }`
+    - `{ kioskId: 1, timestamp: -1 }`
     - `{ severity: 1, timestamp: -1 }`
     - `{ category: 1, timestamp: -1 }`
     - `{ resolved: 1, severity: 1, timestamp: -1 }`
@@ -176,15 +176,15 @@
   - [x] Service 구현 (`src/modules/daily-summary/daily-summary.service.ts`)
   - [x] Routes 구현 (`src/modules/daily-summary/daily-summary.routes.ts`)
   - [x] 인덱스 생성 스크립트 추가
-    - `{ date: 1, deviceId: 1 }` (unique)
+    - `{ date: 1, kioskId: 1 }` (unique)
     - `{ storeId: 1, date: -1 }`
     - `{ groupId: 1, date: -1 }`
-    - `{ deviceId: 1, date: -1 }`
+    - `{ kioskId: 1, date: -1 }`
     - `{ countryCode: 1, date: -1 }`
 
 - [x] **집계 API 구현** ✅ 완료 (2025-01-19)
   - [x] `GET /api/daily-summary` - 일일 요약 목록 조회
-  - [x] `GET /api/daily-summary/:date/:deviceId` - 특정 일일 요약 조회
+  - [x] `GET /api/daily-summary/:date/:kioskId` - 특정 일일 요약 조회
   - [x] `POST /api/daily-summary/aggregate` - 수동 집계 실행
   - [x] sessions → dailySummary (퍼널, 전환율)
   - [x] sales → dailySummary (매출, 결제수단)
@@ -213,7 +213,7 @@
 
 ### sessions ✅ 완료
 - [x] `{ sessionId: 1 }` (unique)
-- [x] `{ deviceId: 1, startedAt: -1 }`
+- [x] `{ kioskId: 1, startedAt: -1 }`
 - [x] `{ storeId: 1, startedAt: -1 }`
 - [x] `{ groupId: 1, startedAt: -1 }`
 - [x] `{ startedAt: -1, status: 1 }`
@@ -223,16 +223,16 @@
 
 ### events ✅ 완료
 - [x] `{ sessionId: 1, sequenceNo: 1 }` (unique)
-- [x] `{ deviceId: 1, timestamp: -1 }`
+- [x] `{ kioskId: 1, timestamp: -1 }`
 - [x] `{ eventType: 1, timestamp: -1 }`
 
 ### performance ✅ 완료
-- [x] `{ deviceId: 1, metricType: 1, timestamp: -1 }`
+- [x] `{ kioskId: 1, metricType: 1, timestamp: -1 }`
 - [x] `{ sessionId: 1, metricType: 1 }` (sparse)
 - [x] `{ success: 1, metricType: 1, timestamp: -1 }`
 
 ### errors ✅ 완료
-- [x] `{ deviceId: 1, timestamp: -1 }`
+- [x] `{ kioskId: 1, timestamp: -1 }`
 - [x] `{ severity: 1, timestamp: -1 }`
 - [x] `{ category: 1, timestamp: -1 }`
 - [x] `{ resolved: 1, severity: 1, timestamp: -1 }`
@@ -243,13 +243,13 @@
 - [x] `{ "settlement.status": 1, "settlement.scheduledDate": 1 }` (sparse)
 - [x] `{ "timeDimension.year": 1, "timeDimension.month": 1, "store.id": 1 }`
 - [x] `{ "timeDimension.year": 1, "timeDimension.week": 1 }`
-- [x] `{ "timeDimension.hour": 1, "device.id": 1 }`
+- [x] `{ "timeDimension.hour": 1, "kiosk.id": 1 }`
 
 ### dailySummary ✅ 완료
-- [x] `{ date: 1, deviceId: 1 }` (unique)
+- [x] `{ date: 1, kioskId: 1 }` (unique)
 - [x] `{ storeId: 1, date: -1 }`
 - [x] `{ groupId: 1, date: -1 }`
-- [x] `{ deviceId: 1, date: -1 }`
+- [x] `{ kioskId: 1, date: -1 }`
 - [x] `{ countryCode: 1, date: -1 }`
 
 ---

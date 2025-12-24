@@ -56,7 +56,7 @@ export class SessionsService {
 
     const session: Omit<SessionDocument, '_id'> = {
       sessionId: input.sessionId,
-      deviceId: input.deviceId,
+      kioskId: input.kioskId,
       storeId: input.storeId,
       groupId: input.groupId,
       countryCode: input.countryCode,
@@ -126,10 +126,10 @@ export class SessionsService {
   }
 
   /**
-   * 디바이스의 최근 세션 조회
+   * 키오스크의 최근 세션 조회
    */
-  async getLatestSessionByDevice(deviceId: string): Promise<SessionDocument | null> {
-    return this.repository.findLatestByDevice(deviceId);
+  async getLatestSessionByKiosk(kioskId: string): Promise<SessionDocument | null> {
+    return this.repository.findLatestByKiosk(kioskId);
   }
 
   /**

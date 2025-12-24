@@ -20,7 +20,7 @@ describe('Errors API', () => {
     it('유효한 에러 리포트를 생성해야 함', async () => {
       // Arrange
       const errorInput = {
-        deviceId: 'DEV001',
+        kioskId: 'DEV001',
         timestamp: new Date().toISOString(),
         severity: 'error' as const,
         category: 'software' as const,
@@ -43,7 +43,7 @@ describe('Errors API', () => {
       expect(body.data.id).toBeDefined();
 
       // DB 확인
-      const errors = await context.db.collection('errors').find({ deviceId: 'DEV001' }).toArray();
+      const errors = await context.db.collection('errors').find({ kioskId: 'DEV001' }).toArray();
       expect(errors).toHaveLength(1);
       expect(errors[0].errorCode).toBe('ERR_CAPTURE_FAILED');
       expect(errors[0].resolved).toBe(false);
@@ -53,7 +53,7 @@ describe('Errors API', () => {
       // Arrange
       const sessionId = '550e8400-e29b-41d4-a716-446655440000';
       const errorInput = {
-        deviceId: 'DEV001',
+        kioskId: 'DEV001',
         timestamp: new Date().toISOString(),
         sessionId,
         severity: 'critical' as const,
@@ -86,7 +86,7 @@ describe('Errors API', () => {
   at async Session.startCapture (/app/session.js:120)`;
 
       const errorInput = {
-        deviceId: 'DEV001',
+        kioskId: 'DEV001',
         timestamp: new Date().toISOString(),
         severity: 'error' as const,
         category: 'hardware' as const,
@@ -113,7 +113,7 @@ describe('Errors API', () => {
     it('deviceState 정보를 포함하여 기록할 수 있어야 함', async () => {
       // Arrange
       const errorInput = {
-        deviceId: 'DEV001',
+        kioskId: 'DEV001',
         timestamp: new Date().toISOString(),
         severity: 'warning' as const,
         category: 'software' as const,
@@ -149,7 +149,7 @@ describe('Errors API', () => {
       // Arrange
       const now = new Date();
       const errorInput = {
-        deviceId: 'DEV001',
+        kioskId: 'DEV001',
         timestamp: now.toISOString(),
         severity: 'error' as const,
         category: 'software' as const,
@@ -192,7 +192,7 @@ describe('Errors API', () => {
         method: 'POST',
         url: '/api/errors',
         payload: {
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           timestamp: new Date().toISOString(),
           // severity 누락
           category: 'software',
@@ -212,7 +212,7 @@ describe('Errors API', () => {
         method: 'POST',
         url: '/api/errors',
         payload: {
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           timestamp: new Date().toISOString(),
           severity: 'invalid_severity',
           category: 'software',
@@ -232,7 +232,7 @@ describe('Errors API', () => {
         method: 'POST',
         url: '/api/errors',
         payload: {
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           timestamp: new Date().toISOString(),
           severity: 'error',
           category: 'invalid_category',
@@ -252,7 +252,7 @@ describe('Errors API', () => {
         method: 'POST',
         url: '/api/errors',
         payload: {
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           timestamp: new Date().toISOString(),
           severity: 'error',
           category: 'software',
@@ -274,7 +274,7 @@ describe('Errors API', () => {
       const now = new Date();
       const result = await context.db.collection('errors').insertOne({
         timestamp: now,
-        deviceId: 'DEV001',
+        kioskId: 'DEV001',
         severity: 'error',
         category: 'software',
         errorCode: 'ERR_TEST',
@@ -355,7 +355,7 @@ describe('Errors API', () => {
       const errors: ErrorDocument[] = [
         {
           timestamp: now,
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           sessionId: sessionId1,
           severity: 'critical',
           category: 'hardware',
@@ -367,7 +367,7 @@ describe('Errors API', () => {
         } as ErrorDocument,
         {
           timestamp: now,
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           sessionId: sessionId1,
           severity: 'warning',
           category: 'software',
@@ -380,7 +380,7 @@ describe('Errors API', () => {
         } as ErrorDocument,
         {
           timestamp: yesterday,
-          deviceId: 'DEV002',
+          kioskId: 'DEV002',
           sessionId: sessionId2,
           severity: 'error',
           category: 'payment',
@@ -410,18 +410,18 @@ describe('Errors API', () => {
       expect(body.meta.total).toBe(3);
     });
 
-    it('deviceId로 필터링해야 함', async () => {
+    it('kioskId로 필터링해야 함', async () => {
       // Act
       const response = await context.app.inject({
         method: 'GET',
-        url: '/api/errors?deviceId=DEV001',
+        url: '/api/errors?kioskId=DEV001',
       });
 
       // Assert
       expect(response.statusCode).toBe(200);
       const body = JSON.parse(response.body);
       expect(body.data).toHaveLength(2);
-      expect(body.data.every((e: any) => e.deviceId === 'DEV001')).toBe(true);
+      expect(body.data.every((e: any) => e.kioskId === 'DEV001')).toBe(true);
     });
 
     it('sessionId로 필터링해야 함', async () => {
@@ -513,14 +513,14 @@ describe('Errors API', () => {
       // Act
       const response = await context.app.inject({
         method: 'GET',
-        url: '/api/errors?deviceId=DEV001&severity=critical&resolved=false',
+        url: '/api/errors?kioskId=DEV001&severity=critical&resolved=false',
       });
 
       // Assert
       expect(response.statusCode).toBe(200);
       const body = JSON.parse(response.body);
       expect(body.data).toHaveLength(1);
-      expect(body.data[0].deviceId).toBe('DEV001');
+      expect(body.data[0].kioskId).toBe('DEV001');
       expect(body.data[0].severity).toBe('critical');
     });
 
@@ -604,7 +604,7 @@ describe('Errors API', () => {
       // 미해결 에러
       const result1 = await context.db.collection('errors').insertOne({
         timestamp: now,
-        deviceId: 'DEV001',
+        kioskId: 'DEV001',
         severity: 'error',
         category: 'software',
         errorCode: 'ERR_TEST',
@@ -618,7 +618,7 @@ describe('Errors API', () => {
       // 이미 해결된 에러
       const result2 = await context.db.collection('errors').insertOne({
         timestamp: now,
-        deviceId: 'DEV001',
+        kioskId: 'DEV001',
         severity: 'warning',
         category: 'software',
         errorCode: 'WARN_TEST',

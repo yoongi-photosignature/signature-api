@@ -14,7 +14,7 @@ export class EventsService {
    * 이벤트 배치 삽입
    */
   async insertBatch(input: BatchEventsInput): Promise<BatchInsertResult> {
-    const { deviceId, events } = input;
+    const { kioskId, events } = input;
 
     if (events.length === 0) {
       return { inserted: 0, duplicates: 0, errors: 0 };
@@ -45,7 +45,7 @@ export class EventsService {
 
         eventsToInsert.push({
           timestamp: new Date(event.timestamp),
-          deviceId,
+          kioskId,
           sessionId: event.sessionId,
           sequenceNo: event.sequenceNo,
           eventType: event.eventType,

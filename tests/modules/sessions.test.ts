@@ -18,7 +18,7 @@ describe('Sessions API', () => {
   describe('POST /api/sessions - 세션 생성', () => {
     const validSessionInput: CreateSessionInput = {
       sessionId: '550e8400-e29b-41d4-a716-446655440000',
-      deviceId: 'DEV001',
+      kioskId: 'DEV001',
       storeId: 'STORE001',
       groupId: 'GROUP001',
       countryCode: 'KR',
@@ -46,7 +46,7 @@ describe('Sessions API', () => {
       // DB 확인
       const session = await context.db.collection('sessions').findOne({ sessionId: validSessionInput.sessionId });
       expect(session).toBeDefined();
-      expect(session?.deviceId).toBe('DEV001');
+      expect(session?.kioskId).toBe('DEV001');
       expect(session?.status).toBe('started');
       expect(session?.funnel).toBeDefined();
       expect(session?.funnel.stages.attract.reached).toBe(true);
@@ -156,7 +156,7 @@ describe('Sessions API', () => {
         url: '/api/sessions',
         payload: {
           sessionId: validSessionInput.sessionId,
-          // deviceId 등 필수 필드 누락
+          // kioskId 등 필수 필드 누락
         },
       });
 
@@ -172,7 +172,7 @@ describe('Sessions API', () => {
       const now = new Date();
       await context.db.collection('sessions').insertOne({
         sessionId: testSessionId,
-        deviceId: 'DEV001',
+        kioskId: 'DEV001',
         storeId: 'STORE001',
         groupId: 'GROUP001',
         countryCode: 'KR',
@@ -288,7 +288,7 @@ describe('Sessions API', () => {
       const now = new Date();
       await context.db.collection('sessions').insertOne({
         sessionId: testSessionId,
-        deviceId: 'DEV001',
+        kioskId: 'DEV001',
         storeId: 'STORE001',
         groupId: 'GROUP001',
         countryCode: 'KR',
@@ -589,7 +589,7 @@ describe('Sessions API', () => {
       const sessions: SessionDocument[] = [
         {
           sessionId: '550e8400-e29b-41d4-a716-446655440010',
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           storeId: 'STORE001',
           groupId: 'GROUP001',
           countryCode: 'KR',
@@ -608,7 +608,7 @@ describe('Sessions API', () => {
         } as SessionDocument,
         {
           sessionId: '550e8400-e29b-41d4-a716-446655440011',
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           storeId: 'STORE001',
           groupId: 'GROUP001',
           countryCode: 'KR',
@@ -627,7 +627,7 @@ describe('Sessions API', () => {
         } as SessionDocument,
         {
           sessionId: '550e8400-e29b-41d4-a716-446655440012',
-          deviceId: 'DEV002',
+          kioskId: 'DEV002',
           storeId: 'STORE002',
           groupId: 'GROUP001',
           countryCode: 'JP',
@@ -664,18 +664,18 @@ describe('Sessions API', () => {
       expect(body.meta.total).toBe(3);
     });
 
-    it('deviceId로 필터링해야 함', async () => {
+    it('kioskId로 필터링해야 함', async () => {
       // Act
       const response = await context.app.inject({
         method: 'GET',
-        url: '/api/sessions?deviceId=DEV001',
+        url: '/api/sessions?kioskId=DEV001',
       });
 
       // Assert
       expect(response.statusCode).toBe(200);
       const body = JSON.parse(response.body);
       expect(body.data).toHaveLength(2);
-      expect(body.data.every((s: any) => s.deviceId === 'DEV001')).toBe(true);
+      expect(body.data.every((s: any) => s.kioskId === 'DEV001')).toBe(true);
     });
 
     it('storeId로 필터링해야 함', async () => {
@@ -710,14 +710,14 @@ describe('Sessions API', () => {
       // Act
       const response = await context.app.inject({
         method: 'GET',
-        url: '/api/sessions?deviceId=DEV001&status=completed',
+        url: '/api/sessions?kioskId=DEV001&status=completed',
       });
 
       // Assert
       expect(response.statusCode).toBe(200);
       const body = JSON.parse(response.body);
       expect(body.data).toHaveLength(1);
-      expect(body.data[0].deviceId).toBe('DEV001');
+      expect(body.data[0].kioskId).toBe('DEV001');
       expect(body.data[0].status).toBe('completed');
     });
 

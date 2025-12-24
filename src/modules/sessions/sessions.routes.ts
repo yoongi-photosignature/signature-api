@@ -10,7 +10,7 @@ import {
 import { CreateSessionInput, UpdateSessionInput, SessionStatus } from '../../types/index.js';
 
 interface ListSessionsQuery {
-  deviceId?: string;
+  kioskId?: string;
   storeId?: string;
   groupId?: string;
   status?: SessionStatus;
@@ -127,10 +127,10 @@ export const sessionsRoutes: FastifyPluginAsync = async (fastify) => {
     { schema: listSessionsSchema },
     async (request, reply) => {
       try {
-        const { deviceId, storeId, groupId, status, startDate, endDate, limit = 20, offset = 0 } = request.query;
+        const { kioskId, storeId, groupId, status, startDate, endDate, limit = 20, offset = 0 } = request.query;
 
         const filter: SessionFilter = {};
-        if (deviceId) filter.deviceId = deviceId;
+        if (kioskId) filter.kioskId = kioskId;
         if (storeId) filter.storeId = storeId;
         if (groupId) filter.groupId = groupId;
         if (status) filter.status = status;

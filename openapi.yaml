@@ -1,0 +1,667 @@
+swagger: "2.0"
+info:
+  title: PhotoSignature API
+  description: PhotoSignature Kiosk API Gateway
+  version: "1.0.0"
+host: "signature-gateway-8izu7kx4.an.gateway.dev"
+schemes:
+  - https
+produces:
+  - application/json
+securityDefinitions:
+  api_key:
+    type: apiKey
+    name: x-api-key
+    in: header
+security:
+  - api_key: []
+
+x-google-backend:
+  address: https://signature-api-yareqqxdwq-du.a.run.app
+  deadline: 30.0
+
+paths:
+  /:
+    get:
+      summary: API 정보
+      operationId: getRoot
+      responses:
+        200:
+          description: OK
+
+  /health:
+    get:
+      summary: Health Check
+      operationId: healthCheck
+      responses:
+        200:
+          description: OK
+
+  # ===== Sales =====
+  /api/sales:
+    post:
+      summary: 거래 생성
+      operationId: createSale
+      responses:
+        201:
+          description: Created
+
+  /api/sales/{id}:
+    get:
+      summary: 거래 조회
+      operationId: getSale
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+
+  /api/sales/{id}/refund:
+    put:
+      summary: 환불 처리
+      operationId: refundSale
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+
+  # ===== Settlement =====
+  /api/settlement/monthly:
+    get:
+      summary: 월간 정산
+      operationId: getMonthlySettlement
+      parameters:
+        - name: year
+          in: query
+          required: true
+          type: integer
+        - name: month
+          in: query
+          required: true
+          type: integer
+        - name: storeId
+          in: query
+          type: string
+      responses:
+        200:
+          description: OK
+
+  /api/settlement/domestic:
+    get:
+      summary: 국내 정산
+      operationId: getDomesticSettlement
+      parameters:
+        - name: year
+          in: query
+          required: true
+          type: integer
+        - name: month
+          in: query
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+
+  /api/settlement/overseas:
+    get:
+      summary: 해외 정산
+      operationId: getOverseasSettlement
+      parameters:
+        - name: year
+          in: query
+          required: true
+          type: integer
+        - name: month
+          in: query
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+
+  # ===== Exchange Rates =====
+  /api/exchange-rates:
+    get:
+      summary: 최신 환율 조회
+      operationId: getLatestExchangeRates
+      responses:
+        200:
+          description: OK
+
+  /api/exchange-rates/{date}:
+    get:
+      summary: 특정 날짜 환율 조회
+      operationId: getExchangeRatesByDate
+      parameters:
+        - name: date
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+
+  # ===== Popups =====
+  /api/popups:
+    get:
+      summary: 팝업 목록 조회
+      operationId: getPopups
+      parameters:
+        - name: status
+          in: query
+          type: string
+      responses:
+        200:
+          description: OK
+    post:
+      summary: 팝업 생성
+      operationId: createPopup
+      responses:
+        201:
+          description: Created
+
+  /api/popups/active:
+    get:
+      summary: 활성 팝업 조회
+      operationId: getActivePopups
+      responses:
+        200:
+          description: OK
+
+  /api/popups/{id}:
+    get:
+      summary: 팝업 상세 조회
+      operationId: getPopup
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+    put:
+      summary: 팝업 수정
+      operationId: updatePopup
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+    delete:
+      summary: 팝업 삭제
+      operationId: deletePopup
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+
+  /api/popups/{id}/status:
+    put:
+      summary: 팝업 상태 변경
+      operationId: updatePopupStatus
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+
+  # ===== Stores =====
+  /api/stores:
+    get:
+      summary: 매장 목록 조회
+      operationId: getStores
+      parameters:
+        - name: country
+          in: query
+          type: string
+        - name: groupId
+          in: query
+          type: string
+      responses:
+        200:
+          description: OK
+    post:
+      summary: 매장 생성
+      operationId: createStore
+      responses:
+        201:
+          description: Created
+
+  /api/stores/{id}:
+    get:
+      summary: 매장 상세 조회
+      operationId: getStore
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+    put:
+      summary: 매장 수정
+      operationId: updateStore
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+    delete:
+      summary: 매장 삭제
+      operationId: deleteStore
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+
+  # ===== Devices =====
+  /api/devices:
+    get:
+      summary: 기기 목록 조회
+      operationId: getDevices
+      parameters:
+        - name: storeId
+          in: query
+          type: string
+        - name: country
+          in: query
+          type: string
+      responses:
+        200:
+          description: OK
+    post:
+      summary: 기기 등록
+      operationId: createDevice
+      responses:
+        201:
+          description: Created
+
+  /api/devices/{id}:
+    get:
+      summary: 기기 상세 조회
+      operationId: getDevice
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+    put:
+      summary: 기기 수정
+      operationId: updateDevice
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+    delete:
+      summary: 기기 삭제
+      operationId: deleteDevice
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+
+  # ===== Config =====
+  /api/config:
+    get:
+      summary: 전체 설정 조회
+      operationId: getConfigs
+      responses:
+        200:
+          description: OK
+
+  /api/config/{key}:
+    get:
+      summary: 특정 설정 조회
+      operationId: getConfig
+      parameters:
+        - name: key
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+    put:
+      summary: 설정 수정
+      operationId: updateConfig
+      parameters:
+        - name: key
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+
+  # ===== Sessions (NEW) =====
+  /api/sessions:
+    get:
+      summary: 세션 목록 조회
+      operationId: getSessions
+      parameters:
+        - name: kioskId
+          in: query
+          type: string
+          description: Kiosk identifier (formerly deviceId)
+        - name: storeId
+          in: query
+          type: string
+        - name: groupId
+          in: query
+          type: string
+        - name: status
+          in: query
+          type: string
+        - name: startDate
+          in: query
+          type: string
+        - name: endDate
+          in: query
+          type: string
+        - name: limit
+          in: query
+          type: integer
+        - name: offset
+          in: query
+          type: integer
+      responses:
+        200:
+          description: OK
+    post:
+      summary: 세션 생성
+      operationId: createSession
+      responses:
+        201:
+          description: Created
+
+  /api/sessions/{sessionId}:
+    get:
+      summary: 세션 조회
+      operationId: getSession
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+    patch:
+      summary: 세션 업데이트
+      operationId: updateSession
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+
+  # ===== Events (NEW) =====
+  /api/events:
+    get:
+      summary: 이벤트 목록 조회
+      operationId: getEvents
+      parameters:
+        - name: sessionId
+          in: query
+          type: string
+        - name: kioskId
+          in: query
+          type: string
+          description: Kiosk identifier (formerly deviceId)
+        - name: eventType
+          in: query
+          type: string
+        - name: startTime
+          in: query
+          type: string
+        - name: endTime
+          in: query
+          type: string
+        - name: limit
+          in: query
+          type: integer
+        - name: offset
+          in: query
+          type: integer
+      responses:
+        200:
+          description: OK
+
+  /api/events/batch:
+    post:
+      summary: 이벤트 배치 삽입
+      operationId: batchEvents
+      responses:
+        201:
+          description: Created
+
+  /api/events/session/{sessionId}:
+    get:
+      summary: 세션별 이벤트 조회
+      operationId: getSessionEvents
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+
+  # ===== Performance (NEW) =====
+  /api/performance:
+    get:
+      summary: 성능 지표 조회
+      operationId: getPerformanceMetrics
+      parameters:
+        - name: kioskId
+          in: query
+          type: string
+          description: Kiosk identifier (formerly deviceId)
+        - name: sessionId
+          in: query
+          type: string
+        - name: metricType
+          in: query
+          type: string
+        - name: startTime
+          in: query
+          type: string
+        - name: endTime
+          in: query
+          type: string
+        - name: limit
+          in: query
+          type: integer
+        - name: offset
+          in: query
+          type: integer
+      responses:
+        200:
+          description: OK
+    post:
+      summary: 성능 기록 (단건)
+      operationId: createPerformanceMetric
+      responses:
+        201:
+          description: Created
+
+  /api/performance/batch:
+    post:
+      summary: 성능 기록 (배치)
+      operationId: batchPerformanceMetrics
+      responses:
+        201:
+          description: Created
+
+  # ===== Errors (NEW) =====
+  /api/errors:
+    get:
+      summary: 에러 목록 조회
+      operationId: getErrors
+      parameters:
+        - name: kioskId
+          in: query
+          type: string
+          description: Kiosk identifier (formerly deviceId)
+        - name: sessionId
+          in: query
+          type: string
+        - name: severity
+          in: query
+          type: string
+        - name: category
+          in: query
+          type: string
+        - name: errorCode
+          in: query
+          type: string
+        - name: resolved
+          in: query
+          type: boolean
+        - name: startTime
+          in: query
+          type: string
+        - name: endTime
+          in: query
+          type: string
+        - name: limit
+          in: query
+          type: integer
+        - name: offset
+          in: query
+          type: integer
+      responses:
+        200:
+          description: OK
+    post:
+      summary: 에러 리포트
+      operationId: createError
+      responses:
+        201:
+          description: Created
+
+  /api/errors/{id}:
+    get:
+      summary: 에러 상세 조회
+      operationId: getError
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+
+  /api/errors/{id}/resolve:
+    patch:
+      summary: 에러 해결 표시
+      operationId: resolveError
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+
+  # ===== Daily Summary (NEW) =====
+  /api/daily-summary:
+    get:
+      summary: 일일 요약 목록 조회
+      operationId: getDailySummaries
+      parameters:
+        - name: kioskId
+          in: query
+          type: string
+          description: Kiosk identifier (formerly deviceId)
+        - name: storeId
+          in: query
+          type: string
+        - name: groupId
+          in: query
+          type: string
+        - name: startDate
+          in: query
+          type: string
+        - name: endDate
+          in: query
+          type: string
+        - name: limit
+          in: query
+          type: integer
+        - name: offset
+          in: query
+          type: integer
+      responses:
+        200:
+          description: OK
+
+  /api/daily-summary/aggregate:
+    post:
+      summary: 수동 집계 실행
+      operationId: triggerAggregation
+      responses:
+        200:
+          description: OK
+
+  /api/daily-summary/{date}/{kioskId}:
+    get:
+      summary: 특정 일일 요약 조회
+      operationId: getDailySummary
+      parameters:
+        - name: date
+          in: path
+          required: true
+          type: string
+        - name: kioskId
+          in: path
+          required: true
+          type: string
+          description: Kiosk identifier (formerly deviceId)
+      responses:
+        200:
+          description: OK

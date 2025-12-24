@@ -124,10 +124,10 @@ const metadataSchema = {
 export const createSessionSchema = {
   body: {
     type: 'object',
-    required: ['sessionId', 'deviceId', 'storeId', 'groupId', 'countryCode', 'appVersion', 'metadata'],
+    required: ['sessionId', 'kioskId', 'storeId', 'groupId', 'countryCode', 'appVersion', 'metadata'],
     properties: {
       sessionId: { type: 'string', pattern: UUID_PATTERN },
-      deviceId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
+      kioskId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
       storeId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
       groupId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
       countryCode: { type: 'string', pattern: COUNTRY_CODE_PATTERN },
@@ -188,7 +188,7 @@ export const listSessionsSchema = {
   querystring: {
     type: 'object',
     properties: {
-      deviceId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
+      kioskId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
       storeId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
       groupId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
       status: { type: 'string', enum: sessionStatusEnum },

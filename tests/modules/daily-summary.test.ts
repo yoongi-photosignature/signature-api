@@ -20,7 +20,7 @@ describe('Daily Summary API', () => {
       const summaries: DailySummaryDocument[] = [
         {
           date: '2024-01-15',
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           storeId: 'STORE001',
           groupId: 'GROUP001',
           countryCode: 'KR',
@@ -70,7 +70,7 @@ describe('Daily Summary API', () => {
         } as DailySummaryDocument,
         {
           date: '2024-01-14',
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           storeId: 'STORE001',
           groupId: 'GROUP001',
           countryCode: 'KR',
@@ -120,7 +120,7 @@ describe('Daily Summary API', () => {
         } as DailySummaryDocument,
         {
           date: '2024-01-15',
-          deviceId: 'DEV002',
+          kioskId: 'DEV002',
           storeId: 'STORE002',
           groupId: 'GROUP001',
           countryCode: 'JP',
@@ -188,18 +188,18 @@ describe('Daily Summary API', () => {
       expect(body.meta.total).toBe(3);
     });
 
-    it('deviceId로 필터링해야 함', async () => {
+    it('kioskId로 필터링해야 함', async () => {
       // Act
       const response = await context.app.inject({
         method: 'GET',
-        url: '/api/daily-summary?deviceId=DEV001',
+        url: '/api/daily-summary?kioskId=DEV001',
       });
 
       // Assert
       expect(response.statusCode).toBe(200);
       const body = JSON.parse(response.body);
       expect(body.data).toHaveLength(2);
-      expect(body.data.every((s: any) => s.deviceId === 'DEV001')).toBe(true);
+      expect(body.data.every((s: any) => s.kioskId === 'DEV001')).toBe(true);
     });
 
     it('storeId로 필터링해야 함', async () => {
@@ -248,14 +248,14 @@ describe('Daily Summary API', () => {
       // Act
       const response = await context.app.inject({
         method: 'GET',
-        url: '/api/daily-summary?deviceId=DEV001&startDate=2024-01-15',
+        url: '/api/daily-summary?kioskId=DEV001&startDate=2024-01-15',
       });
 
       // Assert
       expect(response.statusCode).toBe(200);
       const body = JSON.parse(response.body);
       expect(body.data).toHaveLength(1);
-      expect(body.data[0].deviceId).toBe('DEV001');
+      expect(body.data[0].kioskId).toBe('DEV001');
       expect(body.data[0].date).toBe('2024-01-15');
     });
 
@@ -279,7 +279,7 @@ describe('Daily Summary API', () => {
       // Act
       const response = await context.app.inject({
         method: 'GET',
-        url: '/api/daily-summary?deviceId=DEV001',
+        url: '/api/daily-summary?kioskId=DEV001',
       });
 
       // Assert
@@ -332,11 +332,11 @@ describe('Daily Summary API', () => {
     });
   });
 
-  describe('GET /api/daily-summary/:date/:deviceId - 특정 일일 요약 조회', () => {
+  describe('GET /api/daily-summary/:date/:kioskId - 특정 일일 요약 조회', () => {
     beforeEach(async () => {
       const summary: DailySummaryDocument = {
         date: '2024-01-15',
-        deviceId: 'DEV001',
+        kioskId: 'DEV001',
         storeId: 'STORE001',
         groupId: 'GROUP001',
         countryCode: 'KR',
@@ -400,7 +400,7 @@ describe('Daily Summary API', () => {
       const body = JSON.parse(response.body);
       expect(body.success).toBe(true);
       expect(body.data.date).toBe('2024-01-15');
-      expect(body.data.deviceId).toBe('DEV001');
+      expect(body.data.kioskId).toBe('DEV001');
     });
 
     it('세션 통계를 포함해야 함', async () => {
@@ -512,7 +512,7 @@ describe('Daily Summary API', () => {
       const sessions: SessionDocument[] = [
         {
           sessionId: '550e8400-e29b-41d4-a716-446655440000',
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           storeId: 'STORE001',
           groupId: 'GROUP001',
           countryCode: 'KR',
@@ -580,7 +580,7 @@ describe('Daily Summary API', () => {
       const body = JSON.parse(response.body);
       expect(body.success).toBe(true);
       expect(body.data.date).toBe('2024-01-15');
-      expect(body.data.aggregatedDevices).toBeGreaterThan(0);
+      expect(body.data.aggregatedKiosks).toBeGreaterThan(0);
     });
 
     it('특정 디바이스만 집계할 수 있어야 함', async () => {
@@ -590,7 +590,7 @@ describe('Daily Summary API', () => {
         url: '/api/daily-summary/aggregate',
         payload: {
           date: '2024-01-15',
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
         },
       });
 
@@ -598,7 +598,7 @@ describe('Daily Summary API', () => {
       expect(response.statusCode).toBe(200);
       const body = JSON.parse(response.body);
       expect(body.success).toBe(true);
-      expect(body.data.deviceId).toBe('DEV001');
+      expect(body.data.kioskId).toBe('DEV001');
     });
 
     it('집계 결과가 DB에 저장되어야 함', async () => {
@@ -608,14 +608,14 @@ describe('Daily Summary API', () => {
         url: '/api/daily-summary/aggregate',
         payload: {
           date: '2024-01-15',
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
         },
       });
 
       // Assert
       const summary = await context.db.collection('dailySummary').findOne({
         date: '2024-01-15',
-        deviceId: 'DEV001',
+        kioskId: 'DEV001',
       });
 
       expect(summary).toBeDefined();
@@ -630,7 +630,7 @@ describe('Daily Summary API', () => {
         url: '/api/daily-summary/aggregate',
         payload: {
           // date 누락
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
         },
       });
 

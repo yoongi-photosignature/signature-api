@@ -42,12 +42,12 @@ async function createIndexes() {
     );
     console.log('  ✅ sessionId (unique)');
 
-    // 디바이스별 세션 조회 (최신순)
+    // 키오스크별 세션 조회 (최신순)
     await sessions.createIndex(
-      { deviceId: 1, startedAt: -1 },
-      { name: 'idx_sessions_deviceId_startedAt' }
+      { kioskId: 1, startedAt: -1 },
+      { name: 'idx_sessions_kioskId_startedAt' }
     );
-    console.log('  ✅ deviceId + startedAt');
+    console.log('  ✅ kioskId + startedAt');
 
     // 그룹별 세션 조회 (최신순)
     await sessions.createIndex(
@@ -130,10 +130,10 @@ async function createIndexes() {
 
     // 시간대별 분석
     await sales.createIndex(
-      { 'timeDimension.hour': 1, 'device.id': 1 },
-      { name: 'idx_sales_timeDimension_hour_device' }
+      { 'timeDimension.hour': 1, 'kiosk.id': 1 },
+      { name: 'idx_sales_timeDimension_hour_kiosk' }
     );
-    console.log('  ✅ timeDimension.hour + device.id');
+    console.log('  ✅ timeDimension.hour + kiosk.id');
 
     // ============================================================
     // events 컬렉션 인덱스 (Time-Series)
@@ -148,12 +148,12 @@ async function createIndexes() {
     );
     console.log('  ✅ sessionId + sequenceNo (unique)');
 
-    // 디바이스별 이벤트 조회
+    // 키오스크별 이벤트 조회
     await events.createIndex(
-      { deviceId: 1, timestamp: -1 },
-      { name: 'idx_events_deviceId_timestamp' }
+      { kioskId: 1, timestamp: -1 },
+      { name: 'idx_events_kioskId_timestamp' }
     );
-    console.log('  ✅ deviceId + timestamp');
+    console.log('  ✅ kioskId + timestamp');
 
     // 이벤트 타입별 조회
     await events.createIndex(
@@ -168,12 +168,12 @@ async function createIndexes() {
     console.log('\n📦 performance 컬렉션 인덱스 생성...');
     const performance = db.collection('performance');
 
-    // 디바이스 + 메트릭 타입 + 시간
+    // 키오스크 + 메트릭 타입 + 시간
     await performance.createIndex(
-      { deviceId: 1, metricType: 1, timestamp: -1 },
-      { name: 'idx_performance_deviceId_metricType_timestamp' }
+      { kioskId: 1, metricType: 1, timestamp: -1 },
+      { name: 'idx_performance_kioskId_metricType_timestamp' }
     );
-    console.log('  ✅ deviceId + metricType + timestamp');
+    console.log('  ✅ kioskId + metricType + timestamp');
 
     // 세션별 성능 조회
     await performance.createIndex(
@@ -195,12 +195,12 @@ async function createIndexes() {
     console.log('\n📦 errors 컬렉션 인덱스 생성...');
     const errors = db.collection('errors');
 
-    // 디바이스별 에러 조회
+    // 키오스크별 에러 조회
     await errors.createIndex(
-      { deviceId: 1, timestamp: -1 },
-      { name: 'idx_errors_deviceId_timestamp' }
+      { kioskId: 1, timestamp: -1 },
+      { name: 'idx_errors_kioskId_timestamp' }
     );
-    console.log('  ✅ deviceId + timestamp');
+    console.log('  ✅ kioskId + timestamp');
 
     // 심각도별 조회
     await errors.createIndex(
@@ -238,10 +238,10 @@ async function createIndexes() {
 
     // 기본키 (unique)
     await dailySummary.createIndex(
-      { date: 1, deviceId: 1 },
-      { unique: true, name: 'idx_dailySummary_date_deviceId_unique' }
+      { date: 1, kioskId: 1 },
+      { unique: true, name: 'idx_dailySummary_date_kioskId_unique' }
     );
-    console.log('  ✅ date + deviceId (unique)');
+    console.log('  ✅ date + kioskId (unique)');
 
     // 매장별 요약 조회
     await dailySummary.createIndex(
@@ -257,12 +257,12 @@ async function createIndexes() {
     );
     console.log('  ✅ groupId + date');
 
-    // 디바이스별 요약 조회
+    // 키오스크별 요약 조회
     await dailySummary.createIndex(
-      { deviceId: 1, date: -1 },
-      { name: 'idx_dailySummary_deviceId_date' }
+      { kioskId: 1, date: -1 },
+      { name: 'idx_dailySummary_kioskId_date' }
     );
-    console.log('  ✅ deviceId + date');
+    console.log('  ✅ kioskId + date');
 
     // 국가별 요약 조회
     await dailySummary.createIndex(

@@ -5,7 +5,7 @@ import { createPerformanceSchema, batchPerformanceSchema, listPerformanceSchema 
 import { CreatePerformanceInput, BatchPerformanceInput, MetricType } from '../../types/index.js';
 
 interface ListPerformanceQuery {
-  deviceId?: string;
+  kioskId?: string;
   sessionId?: string;
   metricType?: MetricType;
   startTime?: string;
@@ -15,7 +15,7 @@ interface ListPerformanceQuery {
 }
 
 interface CreatePerformanceBody extends CreatePerformanceInput {
-  deviceId: string;
+  kioskId: string;
 }
 
 export const performanceRoutes: FastifyPluginAsync = async (fastify) => {
@@ -28,8 +28,8 @@ export const performanceRoutes: FastifyPluginAsync = async (fastify) => {
     { schema: createPerformanceSchema },
     async (request, reply) => {
       try {
-        const { deviceId, ...input } = request.body;
-        const id = await service.createMetric(deviceId, input);
+        const { kioskId, ...input } = request.body;
+        const id = await service.createMetric(kioskId, input);
 
         return reply.status(201).send({
           success: true,
@@ -73,10 +73,10 @@ export const performanceRoutes: FastifyPluginAsync = async (fastify) => {
     { schema: listPerformanceSchema },
     async (request, reply) => {
       try {
-        const { deviceId, sessionId, metricType, startTime, endTime, limit = 100, offset = 0 } = request.query;
+        const { kioskId, sessionId, metricType, startTime, endTime, limit = 100, offset = 0 } = request.query;
 
         const filter: PerformanceFilter = {};
-        if (deviceId) filter.deviceId = deviceId;
+        if (kioskId) filter.kioskId = kioskId;
         if (sessionId) filter.sessionId = sessionId;
         if (metricType) filter.metricType = metricType;
         if (startTime) filter.startTime = new Date(startTime);

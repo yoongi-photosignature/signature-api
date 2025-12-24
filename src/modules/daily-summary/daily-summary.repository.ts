@@ -2,7 +2,7 @@ import { Collection, Db, Filter } from 'mongodb';
 import { DailySummaryDocument } from '../../types/index.js';
 
 export interface DailySummaryFilter {
-  deviceId?: string;
+  kioskId?: string;
   storeId?: string;
   groupId?: string;
   startDate?: string;
@@ -21,17 +21,17 @@ export class DailySummaryRepository {
    */
   async upsert(summary: Omit<DailySummaryDocument, '_id'>): Promise<void> {
     await this.collection.updateOne(
-      { date: summary.date, deviceId: summary.deviceId },
+      { date: summary.date, kioskId: summary.kioskId },
       { $set: summary },
       { upsert: true, writeConcern: { w: 'majority' } }
     );
   }
 
   /**
-   * 특정 날짜/디바이스 조회
+   * 특정 날짜/키오스크 조회
    */
-  async findOne(date: string, deviceId: string): Promise<DailySummaryDocument | null> {
-    return this.collection.findOne({ date, deviceId });
+  async findOne(date: string, kioskId: string): Promise<DailySummaryDocument | null> {
+    return this.collection.findOne({ date, kioskId });
   }
 
   /**
@@ -75,7 +75,7 @@ export class DailySummaryRepository {
   private buildQuery(filter: DailySummaryFilter): Filter<DailySummaryDocument> {
     const query: Filter<DailySummaryDocument> = {};
 
-    if (filter.deviceId) query.deviceId = filter.deviceId;
+    if (filter.kioskId) query.kioskId = filter.kioskId;
     if (filter.storeId) query.storeId = filter.storeId;
     if (filter.groupId) query.groupId = filter.groupId;
 

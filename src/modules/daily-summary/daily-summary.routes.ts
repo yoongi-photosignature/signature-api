@@ -4,7 +4,7 @@ import { DailySummaryFilter } from './daily-summary.repository.js';
 import { listDailySummarySchema, getDailySummarySchema, triggerAggregationSchema } from './daily-summary.schema.js';
 
 interface ListSummaryQuery {
-  deviceId?: string;
+  kioskId?: string;
   storeId?: string;
   groupId?: string;
   startDate?: string;
@@ -15,7 +15,7 @@ interface ListSummaryQuery {
 
 interface TriggerAggregationBody {
   date: string;
-  deviceId?: string;
+  kioskId?: string;
 }
 
 export const dailySummaryRoutes: FastifyPluginAsync = async (fastify) => {
@@ -27,10 +27,10 @@ export const dailySummaryRoutes: FastifyPluginAsync = async (fastify) => {
     { schema: listDailySummarySchema },
     async (request, reply) => {
       try {
-        const { deviceId, storeId, groupId, startDate, endDate, limit = 30, offset = 0 } = request.query;
+        const { kioskId, storeId, groupId, startDate, endDate, limit = 30, offset = 0 } = request.query;
 
         const filter: DailySummaryFilter = {};
-        if (deviceId) filter.deviceId = deviceId;
+        if (kioskId) filter.kioskId = kioskId;
         if (storeId) filter.storeId = storeId;
         if (groupId) filter.groupId = groupId;
         if (startDate) filter.startDate = startDate;
@@ -58,14 +58,14 @@ export const dailySummaryRoutes: FastifyPluginAsync = async (fastify) => {
     }
   );
 
-  // GET /api/daily-summary/:date/:deviceId - 특정 일일 요약 조회
-  fastify.get<{ Params: { date: string; deviceId: string } }>(
-    '/:date/:deviceId',
+  // GET /api/daily-summary/:date/:kioskId - 특정 일일 요약 조회
+  fastify.get<{ Params: { date: string; kioskId: string } }>(
+    '/:date/:kioskId',
     { schema: getDailySummarySchema },
     async (request, reply) => {
       try {
-        const { date, deviceId } = request.params;
-        const summary = await service.getSummary(date, deviceId);
+        const { date, kioskId } = request.params;
+        const summary = await service.getSummary(date, kioskId);
 
         if (!summary) {
           return reply.status(404).send({
@@ -94,15 +94,15 @@ export const dailySummaryRoutes: FastifyPluginAsync = async (fastify) => {
     { schema: triggerAggregationSchema },
     async (request, reply) => {
       try {
-        const { date, deviceId } = request.body;
-        const count = await service.aggregate(date, deviceId);
+        const { date, kioskId } = request.body;
+        const count = await service.aggregate(date, kioskId);
 
         return reply.send({
           success: true,
           data: {
             date,
-            deviceId: deviceId || 'all',
-            aggregatedDevices: count,
+            kioskId: kioskId || 'all',
+            aggregatedKiosks: count,
           },
         });
       } catch (error) {

@@ -37,7 +37,7 @@
 | 지표 | 설명 | 계산 방식 |
 |------|------|-----------|
 | 일/주/월 매출 | 기간별 총 매출액 | `sum(salesAmount)` by period |
-| 기기별 매출 | 기기 성과 비교 | `sum(salesAmount)` by deviceId |
+| 기기별 매출 | 기기 성과 비교 | `sum(salesAmount)` by kioskId |
 | 매장별 매출 | 매장 그룹 성과 | `sum(salesAmount)` by groupId |
 | 평균 객단가 | 건당 평균 결제액 | `avg(salesAmount)` |
 | 결제 수단 비율 | 현금 vs 카드 | `count` by paymentMethod |
@@ -139,7 +139,7 @@
 {
   _id: ObjectId,
   sessionId: "uuid-v4",
-  deviceId: "DEVICE001",
+  kioskId: "DEVICE001",
   groupId: "GROUP001",
   
   // 시간 정보
@@ -187,7 +187,7 @@
 {
   _id: ObjectId,
   sessionId: "uuid-v4",
-  deviceId: "DEVICE001",
+  kioskId: "DEVICE001",
   timestamp: ISODate("2024-01-15T10:31:15.234Z"),
   
   // 이벤트 분류
@@ -217,7 +217,7 @@
 {
   _id: ObjectId,
   sessionId: "uuid-v4",
-  deviceId: "DEVICE001",
+  kioskId: "DEVICE001",
   timestamp: ISODate("2024-01-15T10:32:00Z"),
   
   // 측정 대상
@@ -251,7 +251,7 @@
   _id: ObjectId,
   errorId: "uuid-v4",
   sessionId: "uuid-v4",
-  deviceId: "DEVICE001",
+  kioskId: "DEVICE001",
   timestamp: ISODate("2024-01-15T10:33:45Z"),
   
   // 에러 분류
@@ -305,7 +305,7 @@
 {
   _id: ObjectId,
   sessionId: "uuid-v4",
-  deviceId: "DEVICE001",
+  kioskId: "DEVICE001",
   groupId: "GROUP001",
   
   // 날짜 (집계용 필드 분리)
@@ -350,7 +350,7 @@
 {
   _id: ObjectId,
   date: ISODate("2024-01-15T00:00:00Z"),
-  deviceId: "DEVICE001",
+  kioskId: "DEVICE001",
   groupId: "GROUP001",
   
   // 매출 집계
@@ -437,7 +437,7 @@
 
 ```javascript
 // 기기별 최근 세션 조회
-db.sessions.createIndex({ deviceId: 1, startedAt: -1 })
+db.sessions.createIndex({ kioskId: 1, startedAt: -1 })
 
 // 날짜 범위 + 상태 필터
 db.sessions.createIndex({ startedAt: -1, status: 1 })
@@ -476,7 +476,7 @@ db.events.createIndex({ screen: 1, eventType: 1, timestamp: -1 })
 db.createCollection("performance", {
   timeseries: {
     timeField: "timestamp",
-    metaField: "deviceId",
+    metaField: "kioskId",
     granularity: "seconds"
   },
   expireAfterSeconds: 7776000
@@ -484,7 +484,7 @@ db.createCollection("performance", {
 
 // 성능 분석용
 db.performance.createIndex({ metricType: 1, timestamp: -1 })
-db.performance.createIndex({ deviceId: 1, metricType: 1, timestamp: -1 })
+db.performance.createIndex({ kioskId: 1, metricType: 1, timestamp: -1 })
 ```
 
 ### errors
@@ -494,7 +494,7 @@ db.performance.createIndex({ deviceId: 1, metricType: 1, timestamp: -1 })
 db.errors.createIndex({ timestamp: -1 })
 
 // 기기별 에러 조회
-db.errors.createIndex({ deviceId: 1, timestamp: -1 })
+db.errors.createIndex({ kioskId: 1, timestamp: -1 })
 
 // 에러 타입별 분석
 db.errors.createIndex({ errorType: 1, errorCode: 1, timestamp: -1 })
@@ -510,7 +510,7 @@ db.errors.createIndex({ severity: 1, timestamp: -1 })
 db.sales.createIndex({ saleDate: -1 })
 
 // 기기별 매출
-db.sales.createIndex({ deviceId: 1, saleDate: -1 })
+db.sales.createIndex({ kioskId: 1, saleDate: -1 })
 
 // 그룹별 매출
 db.sales.createIndex({ groupId: 1, saleDate: -1 })
@@ -524,7 +524,7 @@ db.sales.createIndex({ character: 1, saleDate: -1 })
 
 ```javascript
 // 기기별 일별 조회
-db.dailySummary.createIndex({ deviceId: 1, date: -1 })
+db.dailySummary.createIndex({ kioskId: 1, date: -1 })
 
 // 그룹별 일별 조회
 db.dailySummary.createIndex({ groupId: 1, date: -1 })
@@ -789,7 +789,7 @@ db.errors.aggregate([
       crashCount: {
         $sum: { $cond: [{ $eq: ["$severity", "crash"] }, 1, 0] }
       },
-      uniqueDevices: { $addToSet: "$deviceId" }
+      uniqueDevices: { $addToSet: "$kioskId" }
     }
   },
   {

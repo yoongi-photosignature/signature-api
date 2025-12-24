@@ -44,7 +44,8 @@ export interface SaleDocument {
     groupId?: string;
     groupName?: string;
   };
-  device: {
+  /** Kiosk 정보 (구 device) */
+  kiosk: {
     id: string;
     name: string;
   };
@@ -159,7 +160,8 @@ export interface CreateSaleInput {
     groupId?: string;
     groupName?: string;
   };
-  device: {
+  /** Kiosk 정보 (구 device) */
+  kiosk: {
     id: string;
     name: string;
   };
@@ -591,7 +593,8 @@ export interface BehaviorSummary {
 export interface SessionDocument {
   _id?: ObjectId;
   sessionId: string;
-  deviceId: string;
+  /** Kiosk 식별자 (구 deviceId) */
+  kioskId: string;
   storeId: string;
   groupId: string;
   countryCode: string;
@@ -617,7 +620,8 @@ export interface SessionDocument {
 
 export interface CreateSessionInput {
   sessionId: string;
-  deviceId: string;
+  /** Kiosk 식별자 (구 deviceId) */
+  kioskId: string;
   storeId: string;
   groupId: string;
   countryCode: string;
@@ -667,7 +671,8 @@ export type EventType =
 export interface EventDocument {
   _id?: ObjectId;
   timestamp: Date;
-  deviceId: string;
+  /** Kiosk 식별자 (구 deviceId) */
+  kioskId: string;
   sessionId: string;
   sequenceNo: number;
   eventType: EventType;
@@ -700,7 +705,8 @@ export interface CreateEventInput {
 }
 
 export interface BatchEventsInput {
-  deviceId: string;
+  /** Kiosk 식별자 (구 deviceId) */
+  kioskId: string;
   events: CreateEventInput[];
 }
 
@@ -720,7 +726,8 @@ export type MetricType =
 export interface PerformanceDocument {
   _id?: ObjectId;
   timestamp: Date;
-  deviceId: string;
+  /** Kiosk 식별자 (구 deviceId) */
+  kioskId: string;
   sessionId?: string;
   metricType: MetricType;
   durationMs: number;
@@ -751,7 +758,8 @@ export interface CreatePerformanceInput {
 }
 
 export interface BatchPerformanceInput {
-  deviceId: string;
+  /** Kiosk 식별자 (구 deviceId) */
+  kioskId: string;
   metrics: CreatePerformanceInput[];
 }
 
@@ -765,7 +773,8 @@ export type ErrorCategory = 'hardware' | 'software' | 'network' | 'payment' | 'u
 export interface ErrorDocument {
   _id?: ObjectId;
   timestamp: Date;
-  deviceId: string;
+  /** Kiosk 식별자 (구 deviceId) */
+  kioskId: string;
   sessionId?: string;
   severity: ErrorSeverity;
   category: ErrorCategory;
@@ -820,7 +829,8 @@ export interface CreateErrorInput {
 export interface DailySummaryDocument {
   _id?: ObjectId;
   date: string;  // YYYY-MM-DD
-  deviceId: string;
+  /** Kiosk 식별자 (구 deviceId) */
+  kioskId: string;
   storeId: string;
   groupId: string;
   countryCode: string;
