@@ -1,4 +1,14 @@
 import Fastify, { FastifyInstance } from 'fastify';
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+// 버전 정보 로드
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const packageJson = JSON.parse(readFileSync(join(__dirname, '../package.json'), 'utf-8'));
+const VERSION = packageJson.version;
+const GIT_COMMIT = process.env.GIT_COMMIT_SHA?.slice(0, 7) || 'unknown';
+const NODE_ENV = process.env.NODE_ENV || 'development';
 import mongoPlugin from './plugins/mongodb.js';
 import { salesRoutes } from './modules/sales/sales.routes.js';
 import { settlementRoutes } from './modules/settlement/settlement.routes.js';
@@ -51,13 +61,16 @@ export async function buildApp(): Promise<FastifyInstance> {
   // Health check
   app.get('/health', async () => ({
     status: 'ok',
+    version: VERSION,
+    commit: GIT_COMMIT,
+    environment: NODE_ENV,
     timestamp: new Date().toISOString(),
   }));
 
   // Root
   app.get('/', async () => ({
     name: 'PhotoSignature API',
-    version: '1.0.0',
+    version: VERSION,
     endpoints: {
       health: '/health',
       sales: '/api/sales',
