@@ -36,9 +36,9 @@ const performanceMetricSchema = {
 export const createPerformanceSchema = {
   body: {
     type: 'object',
-    required: ['deviceId', 'timestamp', 'metricType', 'durationMs', 'success'],
+    required: ['kioskId', 'timestamp', 'metricType', 'durationMs', 'success'],
     properties: {
-      deviceId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
+      kioskId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
       ...performanceMetricSchema.properties,
     },
   },
@@ -48,9 +48,9 @@ export const createPerformanceSchema = {
 export const batchPerformanceSchema = {
   body: {
     type: 'object',
-    required: ['deviceId', 'metrics'],
+    required: ['kioskId', 'metrics'],
     properties: {
-      deviceId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
+      kioskId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
       metrics: {
         type: 'array',
         items: performanceMetricSchema,
@@ -66,7 +66,7 @@ export const listPerformanceSchema = {
   querystring: {
     type: 'object',
     properties: {
-      deviceId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
+      kioskId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
       sessionId: { type: 'string', pattern: UUID_PATTERN },
       metricType: { type: 'string', enum: metricTypeEnum },
       startTime: { type: 'string', format: 'date-time' },

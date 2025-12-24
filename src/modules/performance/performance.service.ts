@@ -7,10 +7,10 @@ export class PerformanceService {
   /**
    * 단일 성능 지표 기록
    */
-  async createMetric(deviceId: string, input: CreatePerformanceInput): Promise<string> {
+  async createMetric(kioskId: string, input: CreatePerformanceInput): Promise<string> {
     const metric: Omit<PerformanceDocument, '_id'> = {
       timestamp: new Date(input.timestamp),
-      deviceId,
+      kioskId,
       sessionId: input.sessionId,
       metricType: input.metricType,
       durationMs: input.durationMs,
@@ -28,7 +28,7 @@ export class PerformanceService {
    * 배치 성능 지표 기록
    */
   async insertBatch(input: BatchPerformanceInput): Promise<{ inserted: number; errors: number }> {
-    const { deviceId, metrics } = input;
+    const { kioskId, metrics } = input;
 
     if (metrics.length === 0) {
       return { inserted: 0, errors: 0 };
@@ -36,7 +36,7 @@ export class PerformanceService {
 
     const documents: Omit<PerformanceDocument, '_id'>[] = metrics.map(m => ({
       timestamp: new Date(m.timestamp),
-      deviceId,
+      kioskId,
       sessionId: m.sessionId,
       metricType: m.metricType,
       durationMs: m.durationMs,

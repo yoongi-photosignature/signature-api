@@ -2,7 +2,7 @@ import { Collection, Db, Filter } from 'mongodb';
 import { SessionDocument, SessionStatus } from '../../types/index.js';
 
 export interface SessionFilter {
-  deviceId?: string;
+  kioskId?: string;
   storeId?: string;
   groupId?: string;
   status?: SessionStatus;
@@ -53,7 +53,7 @@ export class SessionsRepository {
   async findMany(filter: SessionFilter, limit: number = 20, offset: number = 0): Promise<SessionDocument[]> {
     const query: Filter<SessionDocument> = {};
 
-    if (filter.deviceId) query.deviceId = filter.deviceId;
+    if (filter.kioskId) query.kioskId = filter.kioskId;
     if (filter.storeId) query.storeId = filter.storeId;
     if (filter.groupId) query.groupId = filter.groupId;
     if (filter.status) query.status = filter.status;
@@ -78,7 +78,7 @@ export class SessionsRepository {
   async count(filter: SessionFilter): Promise<number> {
     const query: Filter<SessionDocument> = {};
 
-    if (filter.deviceId) query.deviceId = filter.deviceId;
+    if (filter.kioskId) query.kioskId = filter.kioskId;
     if (filter.storeId) query.storeId = filter.storeId;
     if (filter.groupId) query.groupId = filter.groupId;
     if (filter.status) query.status = filter.status;
@@ -93,11 +93,11 @@ export class SessionsRepository {
   }
 
   /**
-   * 디바이스별 최근 세션 조회
+   * 키오스크별 최근 세션 조회
    */
-  async findLatestByDevice(deviceId: string): Promise<SessionDocument | null> {
+  async findLatestByKiosk(kioskId: string): Promise<SessionDocument | null> {
     return this.collection
-      .find({ deviceId })
+      .find({ kioskId })
       .sort({ startedAt: -1 })
       .limit(1)
       .next();

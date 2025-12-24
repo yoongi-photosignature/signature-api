@@ -84,7 +84,7 @@
 4.1 sessions (중심 컬렉션)
 {
   _id: "session_id",
-  device_id: "D001",
+  kiosk_id: "D001",
   store_group_id: "G001",
   nation_code: "KOR",
   app_version: "1.2.3",
@@ -114,7 +114,7 @@
 events_ui {
   ts,
   session_id,
-  device_id,
+  kiosk_id,
   type: "SCREEN_ENTER | SCREEN_EXIT | CLICK | DRAG | PINCH",
   screen: "FRAME_SELECT",
   target,
@@ -125,7 +125,7 @@ events_ui {
 events_perf {
   ts,
   session_id,
-  device_id,
+  kiosk_id,
   task: "SHOOT | RENDER | PRINT | PAYMENT",
   duration_ms,
   ok
@@ -135,7 +135,7 @@ events_perf {
 events_errors {
   ts,
   session_id,
-  device_id,
+  kiosk_id,
   severity,
   code,
   message,
@@ -147,7 +147,7 @@ events_errors {
 crashes {
   ts,
   session_id,
-  device_id,
+  kiosk_id,
   app_version,
   error,
   breadcrumbs,
@@ -157,9 +157,9 @@ crashes {
 6. 인덱스 & TTL 권장
 
 인덱스
-	•	sessions: { device_id, started_at }
+	•	sessions: { kiosk_id, started_at }
 	•	events_ui: { session_id, ts }
-	•	events_perf: { device_id, ts }
+	•	events_perf: { kiosk_id, ts }
 	•	events_errors: { code, ts }
 
 TTL

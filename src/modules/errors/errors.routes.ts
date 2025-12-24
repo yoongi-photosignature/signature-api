@@ -5,7 +5,7 @@ import { createErrorSchema, listErrorsSchema, getErrorSchema, resolveErrorSchema
 import { CreateErrorInput, ErrorSeverity, ErrorCategory } from '../../types/index.js';
 
 interface ListErrorsQuery {
-  deviceId?: string;
+  kioskId?: string;
   sessionId?: string;
   severity?: ErrorSeverity;
   category?: ErrorCategory;
@@ -18,7 +18,7 @@ interface ListErrorsQuery {
 }
 
 interface CreateErrorBody extends CreateErrorInput {
-  deviceId: string;
+  kioskId: string;
 }
 
 export const errorsRoutes: FastifyPluginAsync = async (fastify) => {
@@ -31,14 +31,14 @@ export const errorsRoutes: FastifyPluginAsync = async (fastify) => {
     { schema: createErrorSchema },
     async (request, reply) => {
       try {
-        const { deviceId, ...input } = request.body;
-        const id = await service.createError(deviceId, input);
+        const { kioskId, ...input } = request.body;
+        const id = await service.createError(kioskId, input);
 
         // Critical 에러의 경우 로그 남김
         if (input.severity === 'critical') {
           request.log.error({
             type: 'CRITICAL_ERROR',
-            deviceId,
+            kioskId,
             errorCode: input.errorCode,
             errorMessage: input.errorMessage,
           });
@@ -65,12 +65,12 @@ export const errorsRoutes: FastifyPluginAsync = async (fastify) => {
     async (request, reply) => {
       try {
         const {
-          deviceId, sessionId, severity, category, errorCode,
+          kioskId, sessionId, severity, category, errorCode,
           resolved, startTime, endTime, limit = 50, offset = 0
         } = request.query;
 
         const filter: ErrorFilter = {};
-        if (deviceId) filter.deviceId = deviceId;
+        if (kioskId) filter.kioskId = kioskId;
         if (sessionId) filter.sessionId = sessionId;
         if (severity) filter.severity = severity;
         if (category) filter.category = category;

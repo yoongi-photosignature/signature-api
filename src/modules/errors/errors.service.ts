@@ -7,10 +7,10 @@ export class ErrorsService {
   /**
    * 에러 리포트 생성
    */
-  async createError(deviceId: string, input: CreateErrorInput): Promise<string> {
+  async createError(kioskId: string, input: CreateErrorInput): Promise<string> {
     const error: Omit<ErrorDocument, '_id'> = {
       timestamp: new Date(input.timestamp),
-      deviceId,
+      kioskId,
       sessionId: input.sessionId,
       severity: input.severity,
       category: input.category,

@@ -10,7 +10,7 @@ const COUNTRY_CODE_PATTERN = '^[A-Z]{2,3}$';
 export const createSaleSchema = {
   body: {
     type: 'object',
-    required: ['timestamp', 'store', 'device', 'country', 'amount', 'currency', 'exchangeRate', 'amountKRW', 'rateDate', 'rateSource', 'payment', 'product'],
+    required: ['timestamp', 'store', 'kiosk', 'country', 'amount', 'currency', 'exchangeRate', 'amountKRW', 'rateDate', 'rateSource', 'payment', 'product'],
     properties: {
       timestamp: { type: 'string', format: 'date-time' },
       store: {
@@ -23,7 +23,7 @@ export const createSaleSchema = {
           groupName: { type: 'string', maxLength: 100 },
         },
       },
-      device: {
+      kiosk: {
         type: 'object',
         required: ['id', 'name'],
         properties: {

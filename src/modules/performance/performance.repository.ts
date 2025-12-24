@@ -2,7 +2,7 @@ import { Collection, Db, Filter, InsertManyResult } from 'mongodb';
 import { PerformanceDocument, MetricType } from '../../types/index.js';
 
 export interface PerformanceFilter {
-  deviceId?: string;
+  kioskId?: string;
   sessionId?: string;
   metricType?: MetricType;
   startTime?: Date;
@@ -63,14 +63,14 @@ export class PerformanceRepository {
    * 특정 기간의 백분위수 계산용 데이터 조회
    */
   async getMetricsForPercentile(
-    deviceId: string,
+    kioskId: string,
     metricType: MetricType,
     startDate: Date,
     endDate: Date
   ): Promise<number[]> {
     const results = await this.collection
       .find({
-        deviceId,
+        kioskId,
         metricType,
         timestamp: { $gte: startDate, $lte: endDate },
         success: true,
@@ -87,7 +87,7 @@ export class PerformanceRepository {
   private buildQuery(filter: PerformanceFilter): Filter<PerformanceDocument> {
     const query: Filter<PerformanceDocument> = {};
 
-    if (filter.deviceId) query.deviceId = filter.deviceId;
+    if (filter.kioskId) query.kioskId = filter.kioskId;
     if (filter.sessionId) query.sessionId = filter.sessionId;
     if (filter.metricType) query.metricType = filter.metricType;
 

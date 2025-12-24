@@ -21,7 +21,7 @@ describe('Events API', () => {
     it('유효한 이벤트 배치를 삽입해야 함', async () => {
       // Arrange
       const batchInput: BatchEventsInput = {
-        deviceId: 'DEV001',
+        kioskId: 'DEV001',
         events: [
           {
             timestamp: new Date().toISOString(),
@@ -66,7 +66,7 @@ describe('Events API', () => {
       // Arrange - 기존 이벤트 삽입
       await context.db.collection('events').insertOne({
         timestamp: new Date(),
-        deviceId: 'DEV001',
+        kioskId: 'DEV001',
         sessionId,
         sequenceNo: 1,
         eventType: 'screen_enter',
@@ -75,7 +75,7 @@ describe('Events API', () => {
       } as EventDocument);
 
       const batchInput: BatchEventsInput = {
-        deviceId: 'DEV001',
+        kioskId: 'DEV001',
         events: [
           {
             timestamp: new Date().toISOString(),
@@ -118,7 +118,7 @@ describe('Events API', () => {
         method: 'POST',
         url: '/api/events/batch',
         payload: {
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           events: [],
         },
       });
@@ -133,7 +133,7 @@ describe('Events API', () => {
         method: 'POST',
         url: '/api/events/batch',
         payload: {
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           events: [
             {
               timestamp: new Date().toISOString(),
@@ -156,7 +156,7 @@ describe('Events API', () => {
         method: 'POST',
         url: '/api/events/batch',
         payload: {
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           events: [
             {
               timestamp: new Date().toISOString(),
@@ -179,7 +179,7 @@ describe('Events API', () => {
         method: 'POST',
         url: '/api/events/batch',
         payload: {
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           events: [
             {
               timestamp: new Date().toISOString(),
@@ -211,7 +211,7 @@ describe('Events API', () => {
         method: 'POST',
         url: '/api/events/batch',
         payload: {
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           events,
         },
       });
@@ -223,7 +223,7 @@ describe('Events API', () => {
     it('선택적 필드들을 포함하여 저장할 수 있어야 함', async () => {
       // Arrange
       const batchInput: BatchEventsInput = {
-        deviceId: 'DEV001',
+        kioskId: 'DEV001',
         events: [
           {
             timestamp: new Date().toISOString(),
@@ -258,7 +258,7 @@ describe('Events API', () => {
       // Arrange
       const sessionId2 = '550e8400-e29b-41d4-a716-446655440001';
       const batchInput: BatchEventsInput = {
-        deviceId: 'DEV001',
+        kioskId: 'DEV001',
         events: [
           {
             timestamp: new Date().toISOString(),
@@ -304,7 +304,7 @@ describe('Events API', () => {
       const events: EventDocument[] = [
         {
           timestamp: now,
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           sessionId,
           sequenceNo: 1,
           eventType: 'screen_enter',
@@ -313,7 +313,7 @@ describe('Events API', () => {
         } as EventDocument,
         {
           timestamp: now,
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           sessionId,
           sequenceNo: 2,
           eventType: 'tap',
@@ -324,7 +324,7 @@ describe('Events API', () => {
         } as EventDocument,
         {
           timestamp: now,
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           sessionId,
           sequenceNo: 3,
           eventType: 'screen_exit',
@@ -420,7 +420,7 @@ describe('Events API', () => {
       const events: EventDocument[] = [
         {
           timestamp: now,
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           sessionId: sessionId1,
           sequenceNo: 1,
           eventType: 'screen_enter',
@@ -429,7 +429,7 @@ describe('Events API', () => {
         } as EventDocument,
         {
           timestamp: now,
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           sessionId: sessionId1,
           sequenceNo: 2,
           eventType: 'tap',
@@ -438,7 +438,7 @@ describe('Events API', () => {
         } as EventDocument,
         {
           timestamp: yesterday,
-          deviceId: 'DEV002',
+          kioskId: 'DEV002',
           sessionId: sessionId2,
           sequenceNo: 1,
           eventType: 'screen_enter',
@@ -447,7 +447,7 @@ describe('Events API', () => {
         } as EventDocument,
         {
           timestamp: yesterday,
-          deviceId: 'DEV002',
+          kioskId: 'DEV002',
           sessionId: sessionId2,
           sequenceNo: 2,
           eventType: 'select',
@@ -488,18 +488,18 @@ describe('Events API', () => {
       expect(body.data.every((e: any) => e.sessionId === sessionId1)).toBe(true);
     });
 
-    it('deviceId로 필터링해야 함', async () => {
+    it('kioskId로 필터링해야 함', async () => {
       // Act
       const response = await context.app.inject({
         method: 'GET',
-        url: '/api/events?deviceId=DEV001',
+        url: '/api/events?kioskId=DEV001',
       });
 
       // Assert
       expect(response.statusCode).toBe(200);
       const body = JSON.parse(response.body);
       expect(body.data).toHaveLength(2);
-      expect(body.data.every((e: any) => e.deviceId === 'DEV001')).toBe(true);
+      expect(body.data.every((e: any) => e.kioskId === 'DEV001')).toBe(true);
     });
 
     it('eventType으로 필터링해야 함', async () => {
@@ -520,14 +520,14 @@ describe('Events API', () => {
       // Act
       const response = await context.app.inject({
         method: 'GET',
-        url: `/api/events?deviceId=DEV001&eventType=tap`,
+        url: `/api/events?kioskId=DEV001&eventType=tap`,
       });
 
       // Assert
       expect(response.statusCode).toBe(200);
       const body = JSON.parse(response.body);
       expect(body.data).toHaveLength(1);
-      expect(body.data[0].deviceId).toBe('DEV001');
+      expect(body.data[0].kioskId).toBe('DEV001');
       expect(body.data[0].eventType).toBe('tap');
     });
 

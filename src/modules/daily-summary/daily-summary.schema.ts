@@ -8,7 +8,7 @@ export const listDailySummarySchema = {
   querystring: {
     type: 'object',
     properties: {
-      deviceId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
+      kioskId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
       storeId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
       groupId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
       startDate: { type: 'string', pattern: DATE_PATTERN },
@@ -19,14 +19,14 @@ export const listDailySummarySchema = {
   },
 };
 
-// GET /api/daily-summary/:date/:deviceId - 특정 일일 요약 조회
+// GET /api/daily-summary/:date/:kioskId - 특정 일일 요약 조회
 export const getDailySummarySchema = {
   params: {
     type: 'object',
-    required: ['date', 'deviceId'],
+    required: ['date', 'kioskId'],
     properties: {
       date: { type: 'string', pattern: DATE_PATTERN },
-      deviceId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
+      kioskId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
     },
   },
 };
@@ -38,7 +38,7 @@ export const triggerAggregationSchema = {
     required: ['date'],
     properties: {
       date: { type: 'string', pattern: DATE_PATTERN },
-      deviceId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
+      kioskId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
     },
   },
 };

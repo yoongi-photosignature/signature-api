@@ -12,10 +12,10 @@ export class DailySummaryService {
   }
 
   /**
-   * 특정 날짜/디바이스의 일일 요약 조회
+   * 특정 날짜/키오스크의 일일 요약 조회
    */
-  async getSummary(date: string, deviceId: string): Promise<DailySummaryDocument | null> {
-    return this.repository.findOne(date, deviceId);
+  async getSummary(date: string, kioskId: string): Promise<DailySummaryDocument | null> {
+    return this.repository.findOne(date, kioskId);
   }
 
   /**
@@ -37,26 +37,26 @@ export class DailySummaryService {
   /**
    * 특정 날짜의 집계 실행
    */
-  async aggregate(date: string, deviceId?: string): Promise<number> {
+  async aggregate(date: string, kioskId?: string): Promise<number> {
     const startOfDay = new Date(`${date}T00:00:00.000Z`);
     const endOfDay = new Date(`${date}T23:59:59.999Z`);
 
-    // 해당 날짜에 세션이 있는 디바이스 목록 조회
+    // 해당 날짜에 세션이 있는 키오스크 목록 조회
     const sessionsCollection = this.db.collection('sessions');
-    const query = deviceId
-      ? { deviceId, startedAt: { $gte: startOfDay, $lte: endOfDay } }
+    const query = kioskId
+      ? { kioskId, startedAt: { $gte: startOfDay, $lte: endOfDay } }
       : { startedAt: { $gte: startOfDay, $lte: endOfDay } };
 
-    const devices = await sessionsCollection.distinct('deviceId', query);
+    const kiosks = await sessionsCollection.distinct('kioskId', query);
 
     // 병렬 처리로 성능 개선 (배치 단위: 10개)
     const BATCH_SIZE = 10;
     let aggregatedCount = 0;
 
-    for (let i = 0; i < devices.length; i += BATCH_SIZE) {
-      const batch = devices.slice(i, i + BATCH_SIZE);
+    for (let i = 0; i < kiosks.length; i += BATCH_SIZE) {
+      const batch = kiosks.slice(i, i + BATCH_SIZE);
       await Promise.all(
-        batch.map(devId => this.aggregateDevice(date, devId as string, startOfDay, endOfDay))
+        batch.map(kId => this.aggregateKiosk(date, kId as string, startOfDay, endOfDay))
       );
       aggregatedCount += batch.length;
     }
@@ -65,38 +65,38 @@ export class DailySummaryService {
   }
 
   /**
-   * 특정 디바이스의 일일 집계
+   * 특정 키오스크의 일일 집계
    */
-  private async aggregateDevice(
+  private async aggregateKiosk(
     date: string,
-    deviceId: string,
+    kioskId: string,
     startOfDay: Date,
     endOfDay: Date
   ): Promise<void> {
     // 세션 통계
-    const sessionStats = await this.aggregateSessions(deviceId, startOfDay, endOfDay);
+    const sessionStats = await this.aggregateSessions(kioskId, startOfDay, endOfDay);
 
     // 퍼널 통계
-    const funnelStats = await this.aggregateFunnel(deviceId, startOfDay, endOfDay);
+    const funnelStats = await this.aggregateFunnel(kioskId, startOfDay, endOfDay);
 
     // 매출 통계
-    const salesStats = await this.aggregateSales(deviceId, startOfDay, endOfDay);
+    const salesStats = await this.aggregateSales(kioskId, startOfDay, endOfDay);
 
     // 성능 통계
-    const performanceStats = await this.aggregatePerformance(deviceId, startOfDay, endOfDay);
+    const performanceStats = await this.aggregatePerformance(kioskId, startOfDay, endOfDay);
 
     // 에러 통계
-    const errorStats = await this.aggregateErrors(deviceId, startOfDay, endOfDay);
+    const errorStats = await this.aggregateErrors(kioskId, startOfDay, endOfDay);
 
-    // 디바이스 메타데이터 조회
-    const deviceMeta = await this.getDeviceMetadata(deviceId);
+    // 키오스크 메타데이터 조회
+    const kioskMeta = await this.getKioskMetadata(kioskId);
 
     const summary: Omit<DailySummaryDocument, '_id'> = {
       date,
-      deviceId,
-      storeId: deviceMeta.storeId,
-      groupId: deviceMeta.groupId,
-      countryCode: deviceMeta.countryCode,
+      kioskId,
+      storeId: kioskMeta.storeId,
+      groupId: kioskMeta.groupId,
+      countryCode: kioskMeta.countryCode,
       sessions: sessionStats,
       funnel: funnelStats,
       sales: salesStats,
@@ -112,13 +112,13 @@ export class DailySummaryService {
   /**
    * 세션 통계 집계
    */
-  private async aggregateSessions(deviceId: string, startOfDay: Date, endOfDay: Date) {
+  private async aggregateSessions(kioskId: string, startOfDay: Date, endOfDay: Date) {
     const collection = this.db.collection('sessions');
 
     const pipeline = [
       {
         $match: {
-          deviceId,
+          kioskId,
           startedAt: { $gte: startOfDay, $lte: endOfDay },
         },
       },
@@ -148,14 +148,14 @@ export class DailySummaryService {
   /**
    * 퍼널 통계 집계
    */
-  private async aggregateFunnel(deviceId: string, startOfDay: Date, endOfDay: Date) {
+  private async aggregateFunnel(kioskId: string, startOfDay: Date, endOfDay: Date) {
     const collection = this.db.collection('sessions');
     const stages: FunnelStage[] = ['attract', 'engage', 'customize', 'capture', 'edit', 'checkout', 'payment', 'fulfill'];
 
     const pipeline = [
       {
         $match: {
-          deviceId,
+          kioskId,
           startedAt: { $gte: startOfDay, $lte: endOfDay },
         },
       },
@@ -196,13 +196,13 @@ export class DailySummaryService {
   /**
    * 매출 통계 집계
    */
-  private async aggregateSales(deviceId: string, startOfDay: Date, endOfDay: Date) {
+  private async aggregateSales(kioskId: string, startOfDay: Date, endOfDay: Date) {
     const collection = this.db.collection('sales');
 
     const pipeline = [
       {
         $match: {
-          'device.id': deviceId,
+          'kiosk.id': kioskId,
           timestamp: { $gte: startOfDay, $lte: endOfDay },
         },
       },
@@ -242,7 +242,7 @@ export class DailySummaryService {
   /**
    * 성능 통계 집계 (백분위수)
    */
-  private async aggregatePerformance(deviceId: string, startOfDay: Date, endOfDay: Date) {
+  private async aggregatePerformance(kioskId: string, startOfDay: Date, endOfDay: Date) {
     const collection = this.db.collection('performance');
     const metricTypes = ['app_start', 'capture', 'render', 'print', 'payment'] as const;
 
@@ -251,7 +251,7 @@ export class DailySummaryService {
     for (const metricType of metricTypes) {
       const durations = await collection
         .find({
-          deviceId,
+          kioskId,
           metricType,
           timestamp: { $gte: startOfDay, $lte: endOfDay },
           success: true,
@@ -289,13 +289,13 @@ export class DailySummaryService {
   /**
    * 에러 통계 집계
    */
-  private async aggregateErrors(deviceId: string, startOfDay: Date, endOfDay: Date) {
+  private async aggregateErrors(kioskId: string, startOfDay: Date, endOfDay: Date) {
     const collection = this.db.collection('errors');
 
     const pipeline = [
       {
         $match: {
-          deviceId,
+          kioskId,
           timestamp: { $gte: startOfDay, $lte: endOfDay },
         },
       },
@@ -337,14 +337,14 @@ export class DailySummaryService {
   }
 
   /**
-   * 디바이스 메타데이터 조회
+   * 키오스크 메타데이터 조회
    */
-  private async getDeviceMetadata(deviceId: string): Promise<{
+  private async getKioskMetadata(kioskId: string): Promise<{
     storeId: string;
     groupId: string;
     countryCode: string;
   }> {
-    const device = await this.db.collection('devices').findOne({ _id: deviceId as unknown as any });
+    const device = await this.db.collection('devices').findOne({ _id: kioskId as unknown as any });
 
     if (device) {
       return {
@@ -356,7 +356,7 @@ export class DailySummaryService {
 
     // 세션에서 최근 데이터 조회
     const session = await this.db.collection('sessions')
-      .findOne({ deviceId }, { sort: { startedAt: -1 } });
+      .findOne({ kioskId }, { sort: { startedAt: -1 } });
 
     return {
       storeId: session?.storeId || 'unknown',

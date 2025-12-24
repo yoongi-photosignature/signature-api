@@ -38,7 +38,7 @@ export class SalesService {
     const sale: Record<string, unknown> = {
       timestamp,
       store: input.store,
-      device: input.device,
+      kiosk: input.kiosk,
       country: input.country,
       amount: toDecimal128(input.amount),
       currency: input.currency,

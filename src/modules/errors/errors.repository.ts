@@ -2,7 +2,7 @@ import { Collection, Db, Filter, ObjectId } from 'mongodb';
 import { ErrorDocument, ErrorSeverity, ErrorCategory } from '../../types/index.js';
 
 export interface ErrorFilter {
-  deviceId?: string;
+  kioskId?: string;
   sessionId?: string;
   severity?: ErrorSeverity;
   category?: ErrorCategory;
@@ -80,7 +80,7 @@ export class ErrorsRepository {
   /**
    * 특정 기간의 에러 통계 (집계용)
    */
-  async getErrorStats(deviceId: string, startDate: Date, endDate: Date): Promise<{
+  async getErrorStats(kioskId: string, startDate: Date, endDate: Date): Promise<{
     total: number;
     bySeverity: Record<string, number>;
     byCategory: Record<string, number>;
@@ -88,7 +88,7 @@ export class ErrorsRepository {
     const pipeline = [
       {
         $match: {
-          deviceId,
+          kioskId,
           timestamp: { $gte: startDate, $lte: endDate },
         },
       },
@@ -130,7 +130,7 @@ export class ErrorsRepository {
   private buildQuery(filter: ErrorFilter): Filter<ErrorDocument> {
     const query: Filter<ErrorDocument> = {};
 
-    if (filter.deviceId) query.deviceId = filter.deviceId;
+    if (filter.kioskId) query.kioskId = filter.kioskId;
     if (filter.sessionId) query.sessionId = filter.sessionId;
     if (filter.severity) query.severity = filter.severity;
     if (filter.category) query.category = filter.category;

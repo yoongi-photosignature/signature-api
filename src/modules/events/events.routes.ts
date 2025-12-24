@@ -6,7 +6,7 @@ import { BatchEventsInput, EventType } from '../../types/index.js';
 
 interface ListEventsQuery {
   sessionId?: string;
-  deviceId?: string;
+  kioskId?: string;
   eventType?: EventType;
   startTime?: string;
   endTime?: string;
@@ -46,11 +46,11 @@ export const eventsRoutes: FastifyPluginAsync = async (fastify) => {
     { schema: listEventsSchema },
     async (request, reply) => {
       try {
-        const { sessionId, deviceId, eventType, startTime, endTime, limit = 100, offset = 0 } = request.query;
+        const { sessionId, kioskId, eventType, startTime, endTime, limit = 100, offset = 0 } = request.query;
 
         const filter: EventFilter = {};
         if (sessionId) filter.sessionId = sessionId;
-        if (deviceId) filter.deviceId = deviceId;
+        if (kioskId) filter.kioskId = kioskId;
         if (eventType) filter.eventType = eventType;
         if (startTime) filter.startTime = new Date(startTime);
         if (endTime) filter.endTime = new Date(endTime);

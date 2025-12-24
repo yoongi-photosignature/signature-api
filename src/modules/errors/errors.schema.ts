@@ -12,9 +12,9 @@ const categoryEnum = ['hardware', 'software', 'network', 'payment', 'unknown'];
 export const createErrorSchema = {
   body: {
     type: 'object',
-    required: ['deviceId', 'timestamp', 'severity', 'category', 'errorCode', 'errorMessage', 'appVersion'],
+    required: ['kioskId', 'timestamp', 'severity', 'category', 'errorCode', 'errorMessage', 'appVersion'],
     properties: {
-      deviceId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
+      kioskId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
       timestamp: { type: 'string', format: 'date-time' },
       sessionId: { type: 'string', pattern: UUID_PATTERN },
       severity: { type: 'string', enum: severityEnum },
@@ -54,7 +54,7 @@ export const listErrorsSchema = {
   querystring: {
     type: 'object',
     properties: {
-      deviceId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
+      kioskId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
       sessionId: { type: 'string', pattern: UUID_PATTERN },
       severity: { type: 'string', enum: severityEnum },
       category: { type: 'string', enum: categoryEnum },

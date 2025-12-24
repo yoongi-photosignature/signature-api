@@ -112,7 +112,7 @@
 interface Session {
   // 식별자
   sessionId: string;           // UUID v4 (클라이언트 생성)
-  deviceId: string;            // 기기 ID (KIOSK_XXX)
+  kioskId: string;            // 기기 ID (KIOSK_XXX)
   storeId: string;             // 매장 ID
   groupId: string;             // 그룹 ID
   countryCode: string;         // 국가 코드 (KOR, JPN, VNM, USA)
@@ -240,7 +240,7 @@ interface BehaviorSummary {
 interface Event {
   // 식별자
   sessionId: string;
-  deviceId: string;
+  kioskId: string;
   timestamp: Date;
   sequenceNo: number;          // 세션 내 순서 (유실 감지용)
 
@@ -327,7 +327,7 @@ interface EventData {
 interface PerformanceMetric {
   // 식별자
   sessionId: string;
-  deviceId: string;
+  kioskId: string;
   timestamp: Date;
   appVersion: string;          // 필수! 버전별 비교용
 
@@ -386,7 +386,7 @@ interface ErrorLog {
   // 식별자
   errorId: string;             // UUID
   sessionId: string;
-  deviceId: string;
+  kioskId: string;
   timestamp: Date;
   appVersion: string;          // 필수!
   buildNumber: number;
@@ -497,7 +497,7 @@ class SessionManager {
     // 세션 생성 API 호출
     api.createSession({
       sessionId: this.sessionId,
-      deviceId: CONFIG.DEVICE_ID,
+      kioskId: CONFIG.DEVICE_ID,
       storeId: CONFIG.STORE_ID,
       groupId: CONFIG.GROUP_ID,
       countryCode: CONFIG.COUNTRY_CODE,
@@ -717,7 +717,7 @@ class PerformanceMeasure {
 
     api.recordPerformance({
       sessionId: sessionManager.getSessionId(),
-      deviceId: CONFIG.DEVICE_ID,
+      kioskId: CONFIG.DEVICE_ID,
       timestamp: endTime,
       appVersion: CONFIG.APP_VERSION,
       metricType: this.metricType,
@@ -795,7 +795,7 @@ class ErrorTracker {
     api.reportError({
       errorId: uuidv4(),
       sessionId: sessionManager.getSessionId(),
-      deviceId: CONFIG.DEVICE_ID,
+      kioskId: CONFIG.DEVICE_ID,
       timestamp: new Date(),
       appVersion: CONFIG.APP_VERSION,
       buildNumber: CONFIG.BUILD_NUMBER,
@@ -861,7 +861,7 @@ class ErrorTracker {
 // POST /api/v1/sessions
 interface CreateSessionRequest {
   sessionId: string;
-  deviceId: string;
+  kioskId: string;
   storeId: string;
   groupId: string;
   countryCode: string;

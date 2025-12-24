@@ -19,7 +19,7 @@ describe('Performance API', () => {
     it('유효한 성능 지표를 기록해야 함', async () => {
       // Arrange
       const performanceInput = {
-        deviceId: 'DEV001',
+        kioskId: 'DEV001',
         timestamp: new Date().toISOString(),
         metricType: 'app_start' as const,
         durationMs: 1500,
@@ -40,7 +40,7 @@ describe('Performance API', () => {
       expect(body.data.id).toBeDefined();
 
       // DB 확인
-      const metrics = await context.db.collection('performance').find({ deviceId: 'DEV001' }).toArray();
+      const metrics = await context.db.collection('performance').find({ kioskId: 'DEV001' }).toArray();
       expect(metrics).toHaveLength(1);
       expect(metrics[0].metricType).toBe('app_start');
       expect(metrics[0].durationMs).toBe(1500);
@@ -50,7 +50,7 @@ describe('Performance API', () => {
       // Arrange
       const sessionId = '550e8400-e29b-41d4-a716-446655440000';
       const performanceInput = {
-        deviceId: 'DEV001',
+        kioskId: 'DEV001',
         timestamp: new Date().toISOString(),
         sessionId,
         metricType: 'capture' as const,
@@ -76,7 +76,7 @@ describe('Performance API', () => {
     it('breakdown 정보를 포함하여 기록할 수 있어야 함', async () => {
       // Arrange
       const performanceInput = {
-        deviceId: 'DEV001',
+        kioskId: 'DEV001',
         timestamp: new Date().toISOString(),
         metricType: 'capture' as const,
         durationMs: 5000,
@@ -98,7 +98,7 @@ describe('Performance API', () => {
       // Assert
       expect(response.statusCode).toBe(201);
 
-      const metric = await context.db.collection('performance').findOne({ deviceId: 'DEV001' }) as PerformanceDocument;
+      const metric = await context.db.collection('performance').findOne({ kioskId: 'DEV001' }) as PerformanceDocument;
       expect(metric.breakdown).toBeDefined();
       expect(metric.breakdown?.camera_init).toBe(1000);
       expect(metric.breakdown?.processing).toBe(2000);
@@ -107,7 +107,7 @@ describe('Performance API', () => {
     it('context 정보를 포함하여 기록할 수 있어야 함', async () => {
       // Arrange
       const performanceInput = {
-        deviceId: 'DEV001',
+        kioskId: 'DEV001',
         timestamp: new Date().toISOString(),
         metricType: 'api_call' as const,
         durationMs: 500,
@@ -129,7 +129,7 @@ describe('Performance API', () => {
       // Assert
       expect(response.statusCode).toBe(201);
 
-      const metric = await context.db.collection('performance').findOne({ deviceId: 'DEV001' }) as PerformanceDocument;
+      const metric = await context.db.collection('performance').findOne({ kioskId: 'DEV001' }) as PerformanceDocument;
       expect(metric.context).toBeDefined();
       expect(metric.context?.memoryUsage).toBe(45.5);
       expect(metric.context?.networkType).toBe('wifi');
@@ -138,7 +138,7 @@ describe('Performance API', () => {
     it('실패한 성능 지표를 errorMessage와 함께 기록할 수 있어야 함', async () => {
       // Arrange
       const performanceInput = {
-        deviceId: 'DEV001',
+        kioskId: 'DEV001',
         timestamp: new Date().toISOString(),
         metricType: 'payment' as const,
         durationMs: 15000,
@@ -156,7 +156,7 @@ describe('Performance API', () => {
       // Assert
       expect(response.statusCode).toBe(201);
 
-      const metric = await context.db.collection('performance').findOne({ deviceId: 'DEV001' }) as PerformanceDocument;
+      const metric = await context.db.collection('performance').findOne({ kioskId: 'DEV001' }) as PerformanceDocument;
       expect(metric.success).toBe(false);
       expect(metric.errorMessage).toBe('Payment timeout');
     });
@@ -167,7 +167,7 @@ describe('Performance API', () => {
         method: 'POST',
         url: '/api/performance',
         payload: {
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           // timestamp 누락
           metricType: 'app_start',
           durationMs: 1000,
@@ -185,7 +185,7 @@ describe('Performance API', () => {
         method: 'POST',
         url: '/api/performance',
         payload: {
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           timestamp: new Date().toISOString(),
           metricType: 'invalid_type',
           durationMs: 1000,
@@ -203,7 +203,7 @@ describe('Performance API', () => {
         method: 'POST',
         url: '/api/performance',
         payload: {
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           timestamp: new Date().toISOString(),
           metricType: 'app_start',
           durationMs: -100,
@@ -221,7 +221,7 @@ describe('Performance API', () => {
         method: 'POST',
         url: '/api/performance',
         payload: {
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           timestamp: new Date().toISOString(),
           metricType: 'app_start',
           durationMs: 700000, // 600000 초과
@@ -238,7 +238,7 @@ describe('Performance API', () => {
     it('여러 성능 지표를 배치로 기록해야 함', async () => {
       // Arrange
       const batchInput: BatchPerformanceInput = {
-        deviceId: 'DEV001',
+        kioskId: 'DEV001',
         metrics: [
           {
             timestamp: new Date().toISOString(),
@@ -270,7 +270,7 @@ describe('Performance API', () => {
       expect(body.data.errors).toBe(0);
 
       // DB 확인
-      const metrics = await context.db.collection('performance').find({ deviceId: 'DEV001' }).toArray();
+      const metrics = await context.db.collection('performance').find({ kioskId: 'DEV001' }).toArray();
       expect(metrics).toHaveLength(2);
     });
 
@@ -280,7 +280,7 @@ describe('Performance API', () => {
         method: 'POST',
         url: '/api/performance/batch',
         payload: {
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           metrics: [],
         },
       });
@@ -303,7 +303,7 @@ describe('Performance API', () => {
         method: 'POST',
         url: '/api/performance/batch',
         payload: {
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           metrics,
         },
       });
@@ -318,7 +318,7 @@ describe('Performance API', () => {
         method: 'POST',
         url: '/api/performance/batch',
         payload: {
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           metrics: [
             {
               timestamp: new Date().toISOString(),
@@ -343,7 +343,7 @@ describe('Performance API', () => {
     it('다양한 metricType을 배치로 기록할 수 있어야 함', async () => {
       // Arrange
       const batchInput: BatchPerformanceInput = {
-        deviceId: 'DEV001',
+        kioskId: 'DEV001',
         metrics: [
           {
             timestamp: new Date().toISOString(),
@@ -382,7 +382,7 @@ describe('Performance API', () => {
       // Assert
       expect(response.statusCode).toBe(201);
 
-      const metrics = await context.db.collection('performance').find({ deviceId: 'DEV001' }).toArray();
+      const metrics = await context.db.collection('performance').find({ kioskId: 'DEV001' }).toArray();
       const metricTypes = metrics.map(m => m.metricType);
       expect(metricTypes).toContain('app_start');
       expect(metricTypes).toContain('capture');
@@ -402,7 +402,7 @@ describe('Performance API', () => {
       const metrics: PerformanceDocument[] = [
         {
           timestamp: now,
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           sessionId: sessionId1,
           metricType: 'app_start',
           durationMs: 1500,
@@ -411,7 +411,7 @@ describe('Performance API', () => {
         } as PerformanceDocument,
         {
           timestamp: now,
-          deviceId: 'DEV001',
+          kioskId: 'DEV001',
           sessionId: sessionId1,
           metricType: 'capture',
           durationMs: 3000,
@@ -420,7 +420,7 @@ describe('Performance API', () => {
         } as PerformanceDocument,
         {
           timestamp: yesterday,
-          deviceId: 'DEV002',
+          kioskId: 'DEV002',
           sessionId: sessionId2,
           metricType: 'app_start',
           durationMs: 2000,
@@ -429,7 +429,7 @@ describe('Performance API', () => {
         } as PerformanceDocument,
         {
           timestamp: yesterday,
-          deviceId: 'DEV002',
+          kioskId: 'DEV002',
           sessionId: sessionId2,
           metricType: 'payment',
           durationMs: 5000,
@@ -457,18 +457,18 @@ describe('Performance API', () => {
       expect(body.meta.total).toBe(4);
     });
 
-    it('deviceId로 필터링해야 함', async () => {
+    it('kioskId로 필터링해야 함', async () => {
       // Act
       const response = await context.app.inject({
         method: 'GET',
-        url: '/api/performance?deviceId=DEV001',
+        url: '/api/performance?kioskId=DEV001',
       });
 
       // Assert
       expect(response.statusCode).toBe(200);
       const body = JSON.parse(response.body);
       expect(body.data).toHaveLength(2);
-      expect(body.data.every((m: any) => m.deviceId === 'DEV001')).toBe(true);
+      expect(body.data.every((m: any) => m.kioskId === 'DEV001')).toBe(true);
     });
 
     it('sessionId로 필터링해야 함', async () => {
@@ -503,14 +503,14 @@ describe('Performance API', () => {
       // Act
       const response = await context.app.inject({
         method: 'GET',
-        url: '/api/performance?deviceId=DEV001&metricType=capture',
+        url: '/api/performance?kioskId=DEV001&metricType=capture',
       });
 
       // Assert
       expect(response.statusCode).toBe(200);
       const body = JSON.parse(response.body);
       expect(body.data).toHaveLength(1);
-      expect(body.data[0].deviceId).toBe('DEV001');
+      expect(body.data[0].kioskId).toBe('DEV001');
       expect(body.data[0].metricType).toBe('capture');
     });
 

@@ -54,9 +54,9 @@ const eventSchema = {
 export const batchEventsSchema = {
   body: {
     type: 'object',
-    required: ['deviceId', 'events'],
+    required: ['kioskId', 'events'],
     properties: {
-      deviceId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
+      kioskId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
       events: {
         type: 'array',
         items: eventSchema,
@@ -84,7 +84,7 @@ export const listEventsSchema = {
     type: 'object',
     properties: {
       sessionId: { type: 'string', pattern: UUID_PATTERN },
-      deviceId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
+      kioskId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
       eventType: { type: 'string', enum: eventTypeEnum },
       startTime: { type: 'string', format: 'date-time' },
       endTime: { type: 'string', format: 'date-time' },
