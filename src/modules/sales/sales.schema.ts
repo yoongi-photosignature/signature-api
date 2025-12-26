@@ -4,15 +4,17 @@ const UUID_PATTERN = '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0
 const DECIMAL_PATTERN = '^-?\\d+(\\.\\d+)?$';
 // 안전한 ID 패턴 (NoSQL Injection 방지)
 const SAFE_ID_PATTERN = '^[a-zA-Z0-9_-]+$';
-// 국가 코드 패턴
-const COUNTRY_CODE_PATTERN = '^[A-Z]{2,3}$';
+// 국가 코드 패턴 (2자리: KR, JP, US, VN)
+const COUNTRY_CODE_PATTERN = '^[A-Z]{2}$';
 
 export const createSaleSchema = {
   body: {
     type: 'object',
-    required: ['timestamp', 'store', 'kiosk', 'country', 'amount', 'currency', 'exchangeRate', 'amountKRW', 'rateDate', 'rateSource', 'payment', 'product'],
+    required: ['timestamp', 'sessionId', 'transactionId', 'store', 'kiosk', 'country', 'amount', 'currency', 'amountKRW', 'rateDate', 'payment', 'product'],
     properties: {
       timestamp: { type: 'string', format: 'date-time' },
+      sessionId: { type: 'string', pattern: UUID_PATTERN },
+      transactionId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 100 },
       store: {
         type: 'object',
         required: ['id', 'name'],
@@ -41,10 +43,8 @@ export const createSaleSchema = {
       },
       amount: { type: 'string', pattern: '^\\d+(\\.\\d+)?$' },
       currency: { type: 'string', enum: ['KRW', 'JPY', 'USD', 'VND'] },
-      exchangeRate: { type: 'string', pattern: '^\\d+(\\.\\d+)?$' },
       amountKRW: { type: 'string', pattern: '^\\d+(\\.\\d+)?$' },
       rateDate: { type: 'string', format: 'date' },
-      rateSource: { type: 'string', enum: ['FIREBASE', 'CACHED', 'API_FALLBACK'] },
       payment: {
         type: 'object',
         required: ['type'],
@@ -70,11 +70,11 @@ export const createSaleSchema = {
       },
       product: {
         type: 'object',
-        required: ['type', 'frameId', 'frameCategory', 'printCount', 'isAdditionalPrint'],
+        required: ['type', 'frameDesign', 'frameFormat', 'printCount', 'isAdditionalPrint'],
         properties: {
           type: { type: 'string', enum: ['PHOTO', 'BEAUTY', 'AI', 'FORTUNE'] },
-          frameId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
-          frameCategory: { type: 'string', enum: ['3CUT', '4CUT', '6CUT', '8CUT'] },
+          frameDesign: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
+          frameFormat: { type: 'string', enum: ['3CUT', '4CUT', '6CUT', '8CUT'] },
           printCount: { type: 'integer', minimum: 1, maximum: 100 },
           isAdditionalPrint: { type: 'boolean' },
         },
@@ -123,8 +123,10 @@ export const createSaleSchema = {
           },
         },
       },
+      // 선택 필드 (기본값은 서비스에서 처리)
+      exchangeRate: { type: 'string', pattern: '^\\d+(\\.\\d+)?$' },
+      rateSource: { type: 'string', enum: ['FIREBASE', 'CACHED', 'API_FALLBACK'] },
       // 신규 필드 (Phase 1)
-      sessionId: { type: 'string', pattern: UUID_PATTERN },
       amounts: {
         type: 'object',
         required: ['gross', 'discount', 'tax', 'net', 'margin', 'currency'],

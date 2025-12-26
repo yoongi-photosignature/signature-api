@@ -38,6 +38,8 @@ export interface SaleTimeDimension {
 export interface SaleDocument {
   _id: ObjectId;
   timestamp: Date;
+  sessionId: string;
+  transactionId: string;
   store: {
     id: string;
     name: string;
@@ -96,8 +98,8 @@ export interface SaleDocument {
   };
   product: {
     type: ProductType;
-    frameId: string;
-    frameCategory: FrameCategory;
+    frameDesign: string;
+    frameFormat: FrameFormat;
     printCount: number;
     isAdditionalPrint: boolean;
   };
@@ -117,7 +119,6 @@ export interface SaleDocument {
     ai?: { used: boolean; fee: Decimal128 };
   };
   // 신규 필드 (Phase 1)
-  sessionId?: string;           // sessions.sessionId 연결
   amounts?: SaleAmounts;        // 확장된 금액 구조
   settlement?: SaleSettlement;  // 정산 정보
   timeDimension?: SaleTimeDimension;  // 시간 차원
@@ -130,7 +131,7 @@ export type RateSource = 'FIREBASE' | 'CACHED' | 'API_FALLBACK';
 export type PaymentType = 'CASH' | 'CARD';
 export type SaleStatus = 'COMPLETED' | 'FAILED' | 'REFUNDED';
 export type ProductType = 'PHOTO' | 'BEAUTY' | 'AI' | 'FORTUNE';
-export type FrameCategory = '3CUT' | '4CUT' | '6CUT' | '8CUT';
+export type FrameFormat = '3CUT' | '4CUT' | '6CUT' | '8CUT';
 
 // ============================================================
 // API Input Types
@@ -154,6 +155,8 @@ export interface CreateSaleSettlementInput {
 
 export interface CreateSaleInput {
   timestamp: string;
+  sessionId: string;
+  transactionId: string;
   store: {
     id: string;
     name: string;
@@ -171,10 +174,10 @@ export interface CreateSaleInput {
   };
   amount: string;
   currency: Currency;
-  exchangeRate: string;
+  exchangeRate?: string;  // 선택, 기본값 "1"
   amountKRW: string;
   rateDate: string;
-  rateSource: RateSource;
+  rateSource?: RateSource;  // 선택, 기본값 "FIREBASE"
   payment: {
     type: PaymentType;
     receiptNo?: string;
@@ -192,8 +195,8 @@ export interface CreateSaleInput {
   };
   product: {
     type: ProductType;
-    frameId: string;
-    frameCategory: FrameCategory;
+    frameDesign: string;
+    frameFormat: FrameFormat;
     printCount: number;
     isAdditionalPrint: boolean;
   };
@@ -218,7 +221,6 @@ export interface CreateSaleInput {
     ai?: { used: boolean; fee: string };
   };
   // 신규 필드 (Phase 1)
-  sessionId?: string;
   amounts?: CreateSaleAmountsInput;
   settlement?: CreateSaleSettlementInput;
 }

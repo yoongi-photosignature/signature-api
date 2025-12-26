@@ -112,27 +112,27 @@ x-api-key: YOUR_API_KEY
 **Request Body:**
 ```json
 {
-  "timestamp": "2024-12-10T14:30:00.000Z",
+  "timestamp": "2024-12-26T14:30:00.000Z",
+  "sessionId": "550e8400-e29b-41d4-a716-446655440000",
+  "transactionId": "TXN_20241226_001",
   "store": {
     "id": "store_001",
     "name": "강남점",
     "groupId": "group_001",
     "groupName": "서울그룹"
   },
-  "device": {
-    "id": "device_001",
+  "kiosk": {
+    "id": "kiosk_001",
     "name": "키오스크1"
   },
   "country": {
-    "code": "KOR",
+    "code": "KR",
     "name": "대한민국"
   },
   "amount": "5000",
   "currency": "KRW",
-  "exchangeRate": "1",
   "amountKRW": "5000",
-  "rateDate": "2024-12-10",
-  "rateSource": "FIREBASE",
+  "rateDate": "2024-12-26",
   "payment": {
     "type": "CARD",
     "receiptNo": "RCP123456",
@@ -140,8 +140,8 @@ x-api-key: YOUR_API_KEY
   },
   "product": {
     "type": "PHOTO",
-    "frameId": "frame_001",
-    "frameCategory": "4CUT",
+    "frameDesign": "frame_001",
+    "frameFormat": "4CUT",
     "printCount": 2,
     "isAdditionalPrint": false
   },
@@ -170,19 +170,24 @@ x-api-key: YOUR_API_KEY
 
 **필수 필드:**
 - `timestamp` (string, ISO 8601)
+- `sessionId` (string, UUID v4): 세션 ID
+- `transactionId` (string): 결제 트랜잭션 ID
 - `store` (object): `id`, `name` 필수
-- `device` (object): `id`, `name` 필수
-- `country` (object): `code`, `name` 필수
+- `kiosk` (object): `id`, `name` 필수
+- `country` (object): `code` (2자리: KR, JP, US, VN), `name` 필수
 - `amount` (string): 숫자 문자열
 - `currency` (string): `KRW` | `JPY` | `USD` | `VND`
-- `exchangeRate` (string): 숫자 문자열
 - `amountKRW` (string): 숫자 문자열
 - `rateDate` (string, YYYY-MM-DD)
-- `rateSource` (string): `FIREBASE` | `CACHED` | `API_FALLBACK`
 - `payment` (object): `type` 필수 (`CASH` | `CARD`)
 - `product` (object): 모든 필드 필수
   - `type`: `PHOTO` | `BEAUTY` | `AI` | `FORTUNE`
-  - `frameCategory`: `3CUT` | `4CUT` | `6CUT` | `8CUT`
+  - `frameFormat`: `3CUT` | `4CUT` | `6CUT` | `8CUT`
+  - `frameDesign`: 프레임 디자인 ID
+
+**선택 필드:**
+- `exchangeRate` (string): 환율 (기본값: "1")
+- `rateSource` (string): `FIREBASE` | `CACHED` | `API_FALLBACK` (기본값: "FIREBASE")
 
 **Response (201):**
 ```json
@@ -208,21 +213,23 @@ x-api-key: YOUR_API_KEY
   "success": true,
   "data": {
     "_id": "507f1f77bcf86cd799439011",
-    "timestamp": "2024-12-10T14:30:00.000Z",
+    "timestamp": "2024-12-26T14:30:00.000Z",
+    "sessionId": "550e8400-e29b-41d4-a716-446655440000",
+    "transactionId": "TXN_20241226_001",
     "store": { "id": "store_001", "name": "강남점" },
-    "device": { "id": "device_001", "name": "키오스크1" },
-    "country": { "code": "KOR", "name": "대한민국" },
+    "kiosk": { "id": "kiosk_001", "name": "키오스크1" },
+    "country": { "code": "KR", "name": "대한민국" },
     "amount": "5000",
     "currency": "KRW",
     "exchangeRate": "1",
     "amountKRW": "5000",
-    "rateDate": "2024-12-10",
+    "rateDate": "2024-12-26",
     "rateSource": "FIREBASE",
     "payment": { "type": "CARD", "receiptNo": "RCP123456" },
     "status": "COMPLETED",
-    "product": { ... },
-    "createdAt": "2024-12-10T14:30:00.000Z",
-    "updatedAt": "2024-12-10T14:30:00.000Z"
+    "product": { "type": "PHOTO", "frameDesign": "frame_001", "frameFormat": "4CUT", ... },
+    "createdAt": "2024-12-26T14:30:00.000Z",
+    "updatedAt": "2024-12-26T14:30:00.000Z"
   }
 }
 ```
@@ -424,9 +431,9 @@ type PaymentType = 'CASH' | 'CARD'
 type ProductType = 'PHOTO' | 'BEAUTY' | 'AI' | 'FORTUNE'
 ```
 
-### FrameCategory
+### FrameFormat
 ```typescript
-type FrameCategory = '3CUT' | '4CUT' | '6CUT' | '8CUT'
+type FrameFormat = '3CUT' | '4CUT' | '6CUT' | '8CUT'
 ```
 
 ### SaleStatus

@@ -37,15 +37,17 @@ export class SalesService {
     // Build sale object, only including fields that have values
     const sale: Record<string, unknown> = {
       timestamp,
+      sessionId: input.sessionId,
+      transactionId: input.transactionId,
       store: input.store,
       kiosk: input.kiosk,
       country: input.country,
       amount: toDecimal128(input.amount),
       currency: input.currency,
-      exchangeRate: toDecimal128(input.exchangeRate),
+      exchangeRate: toDecimal128(input.exchangeRate || '1'),
       amountKRW: toDecimal128(input.amountKRW),
       rateDate: new Date(input.rateDate),
-      rateSource: input.rateSource,
+      rateSource: input.rateSource || 'FIREBASE',
       payment: input.payment,
       status: 'COMPLETED',
       product: input.product,
@@ -85,11 +87,6 @@ export class SalesService {
       if (Object.keys(services).length > 0) {
         sale.services = services;
       }
-    }
-
-    // 신규 필드: sessionId
-    if (input.sessionId) {
-      sale.sessionId = input.sessionId;
     }
 
     // 신규 필드: amounts (확장된 금액 구조)
