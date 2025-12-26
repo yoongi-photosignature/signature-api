@@ -50,7 +50,11 @@ export class SalesService {
       rateSource: input.rateSource || 'FIREBASE',
       payment: input.payment,
       status: 'COMPLETED',
-      product: input.product,
+      product: {
+        ...input.product,
+        printCount: input.product.printCount ?? 1,
+        isAdditionalPrint: input.product.isAdditionalPrint ?? false,
+      },
       // 시간 차원 자동 생성
       timeDimension: this.createTimeDimension(timestamp),
       createdAt: now,

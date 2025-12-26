@@ -180,10 +180,12 @@ x-api-key: YOUR_API_KEY
 - `amountKRW` (string): 숫자 문자열
 - `rateDate` (string, YYYY-MM-DD)
 - `payment` (object): `type` 필수 (`CASH` | `CARD`)
-- `product` (object): 모든 필드 필수
-  - `type`: `PHOTO` | `BEAUTY` | `AI` | `FORTUNE`
-  - `frameFormat`: `3CUT` | `4CUT` | `6CUT` | `8CUT`
-  - `frameDesign`: 프레임 디자인 ID
+- `product` (object)
+  - `type` (필수): `PHOTO` | `BEAUTY` | `AI` | `FORTUNE`
+  - `frameFormat` (필수): `3CUT` | `4CUT` | `6CUT` | `8CUT`
+  - `frameDesign` (필수): 프레임 디자인 ID
+  - `printCount` (선택): 인쇄 매수 (기본값: 1)
+  - `isAdditionalPrint` (선택): 추가 인쇄 여부 (기본값: false)
 
 **선택 필드:**
 - `exchangeRate` (string): 환율 (기본값: "1")

@@ -70,13 +70,13 @@ export const createSaleSchema = {
       },
       product: {
         type: 'object',
-        required: ['type', 'frameDesign', 'frameFormat', 'printCount', 'isAdditionalPrint'],
+        required: ['type', 'frameDesign', 'frameFormat'],
         properties: {
           type: { type: 'string', enum: ['PHOTO', 'BEAUTY', 'AI', 'FORTUNE'] },
           frameDesign: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
           frameFormat: { type: 'string', enum: ['3CUT', '4CUT', '6CUT', '8CUT'] },
-          printCount: { type: 'integer', minimum: 1, maximum: 100 },
-          isAdditionalPrint: { type: 'boolean' },
+          printCount: { type: 'integer', minimum: 1, maximum: 100, default: 1 },
+          isAdditionalPrint: { type: 'boolean', default: false },
         },
       },
       discount: {

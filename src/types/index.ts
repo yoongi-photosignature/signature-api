@@ -197,8 +197,8 @@ export interface CreateSaleInput {
     type: ProductType;
     frameDesign: string;
     frameFormat: FrameFormat;
-    printCount: number;
-    isAdditionalPrint: boolean;
+    printCount?: number;         // 선택, 기본값 1
+    isAdditionalPrint?: boolean; // 선택, 기본값 false
   };
   discount?: {
     roulette?: string;
