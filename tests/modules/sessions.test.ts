@@ -17,7 +17,7 @@ describe('Sessions API', () => {
 
   describe('POST /api/sessions - 세션 생성', () => {
     const validSessionInput: CreateSessionInput = {
-      sessionId: '550e8400-e29b-41d4-a716-446655440000',
+      sessionId: '01HRJ8XJPK0000000000000000',
       kioskId: 'DEV001',
       storeId: 'STORE001',
       groupId: 'GROUP001',
@@ -167,7 +167,7 @@ describe('Sessions API', () => {
   });
 
   describe('GET /api/sessions/:sessionId - 세션 조회', () => {
-    const testSessionId = '550e8400-e29b-41d4-a716-446655440001';
+    const testSessionId = '01HRJ8XJPK0000000000000001';
 
     beforeEach(async () => {
       const now = new Date();
@@ -261,7 +261,7 @@ describe('Sessions API', () => {
       // Act
       const response = await context.app.inject({
         method: 'GET',
-        url: '/api/sessions/550e8400-e29b-41d4-a716-446655440099',
+        url: '/api/sessions/01HRJ8XJPK0000000000000099',
       });
 
       // Assert
@@ -284,7 +284,7 @@ describe('Sessions API', () => {
   });
 
   describe('PATCH /api/sessions/:sessionId - 세션 업데이트', () => {
-    const testSessionId = '550e8400-e29b-41d4-a716-446655440002';
+    const testSessionId = '01HRJ8XJPK0000000000000002';
 
     beforeEach(async () => {
       const now = new Date();
@@ -524,7 +524,7 @@ describe('Sessions API', () => {
       // Act
       const response = await context.app.inject({
         method: 'PATCH',
-        url: '/api/sessions/550e8400-e29b-41d4-a716-446655440099',
+        url: '/api/sessions/01HRJ8XJPK0000000000000099',
         payload: {
           status: 'completed',
         },
@@ -591,7 +591,7 @@ describe('Sessions API', () => {
 
       const sessions: SessionDocument[] = [
         {
-          sessionId: '550e8400-e29b-41d4-a716-446655440010',
+          sessionId: '01HRJ8XJPK0000000000000010',
           kioskId: 'DEV001',
           storeId: 'STORE001',
           groupId: 'GROUP001',
@@ -611,7 +611,7 @@ describe('Sessions API', () => {
           updatedAt: now,
         } as SessionDocument,
         {
-          sessionId: '550e8400-e29b-41d4-a716-446655440011',
+          sessionId: '01HRJ8XJPK0000000000000011',
           kioskId: 'DEV001',
           storeId: 'STORE001',
           groupId: 'GROUP001',
@@ -631,7 +631,7 @@ describe('Sessions API', () => {
           updatedAt: yesterday,
         } as SessionDocument,
         {
-          sessionId: '550e8400-e29b-41d4-a716-446655440012',
+          sessionId: '01HRJ8XJPK0000000000000012',
           kioskId: 'DEV002',
           storeId: 'STORE002',
           groupId: 'GROUP001',

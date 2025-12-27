@@ -1,5 +1,5 @@
-// UUID v4 패턴
-const UUID_PATTERN = '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$';
+// ULID 패턴 (Crockford Base32: 0-9, A-H, J-K, M-N, P-T, V-Z, 대소문자 허용)
+const ULID_PATTERN = '^[0-9A-HJ-KM-NP-TV-Za-hj-km-np-tv-z]{26}$';
 // 금액 패턴 (소수점 포함)
 const DECIMAL_PATTERN = '^-?\\d+(\\.\\d+)?$';
 // 안전한 ID 패턴 (NoSQL Injection 방지)
@@ -13,7 +13,7 @@ export const createSaleSchema = {
     required: ['timestamp', 'sessionId', 'transactionId', 'store', 'kiosk', 'country', 'amount', 'currency', 'amountKRW', 'rateDate', 'payment', 'product'],
     properties: {
       timestamp: { type: 'string', format: 'date-time' },
-      sessionId: { type: 'string', pattern: UUID_PATTERN },
+      sessionId: { type: 'string', pattern: ULID_PATTERN },
       transactionId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 100 },
       store: {
         type: 'object',

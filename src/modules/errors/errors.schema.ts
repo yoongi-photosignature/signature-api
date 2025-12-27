@@ -1,5 +1,5 @@
-// UUID v4 패턴
-const UUID_PATTERN = '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$';
+// ULID 패턴 (Crockford Base32: 0-9, A-H, J-K, M-N, P-T, V-Z, 대소문자 허용)
+const ULID_PATTERN = '^[0-9A-HJ-KM-NP-TV-Za-hj-km-np-tv-z]{26}$';
 // 안전한 ID 패턴
 const SAFE_ID_PATTERN = '^[a-zA-Z0-9_-]+$';
 // SemVer 패턴
@@ -16,7 +16,7 @@ export const createErrorSchema = {
     properties: {
       kioskId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
       timestamp: { type: 'string', format: 'date-time' },
-      sessionId: { type: 'string', pattern: UUID_PATTERN },
+      sessionId: { type: 'string', pattern: ULID_PATTERN },
       severity: { type: 'string', enum: severityEnum },
       category: { type: 'string', enum: categoryEnum },
       errorCode: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
@@ -55,7 +55,7 @@ export const listErrorsSchema = {
     type: 'object',
     properties: {
       kioskId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
-      sessionId: { type: 'string', pattern: UUID_PATTERN },
+      sessionId: { type: 'string', pattern: ULID_PATTERN },
       severity: { type: 'string', enum: severityEnum },
       category: { type: 'string', enum: categoryEnum },
       errorCode: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },

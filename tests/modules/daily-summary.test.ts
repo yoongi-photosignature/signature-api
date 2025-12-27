@@ -511,7 +511,7 @@ describe('Daily Summary API', () => {
       const now = new Date('2024-01-15T12:00:00Z');
       const sessions: SessionDocument[] = [
         {
-          sessionId: '550e8400-e29b-41d4-a716-446655440000',
+          sessionId: '01HRJ8XJPK0000000000000000',
           kioskId: 'DEV001',
           storeId: 'STORE001',
           groupId: 'GROUP001',

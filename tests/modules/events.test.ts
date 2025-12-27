@@ -16,7 +16,7 @@ describe('Events API', () => {
   });
 
   describe('POST /api/events/batch - 이벤트 배치 삽입', () => {
-    const sessionId = '550e8400-e29b-41d4-a716-446655440000';
+    const sessionId = '01HRJ8XJPK0000000000000000';
 
     it('유효한 이벤트 배치를 삽입해야 함', async () => {
       // Arrange
@@ -256,7 +256,7 @@ describe('Events API', () => {
 
     it('여러 세션의 이벤트를 배치로 처리할 수 있어야 함', async () => {
       // Arrange
-      const sessionId2 = '550e8400-e29b-41d4-a716-446655440001';
+      const sessionId2 = '01HRJ8XJPK0000000000000001';
       const batchInput: BatchEventsInput = {
         kioskId: 'DEV001',
         events: [
@@ -297,7 +297,7 @@ describe('Events API', () => {
   });
 
   describe('GET /api/events/session/:sessionId - 세션별 이벤트 조회', () => {
-    const sessionId = '550e8400-e29b-41d4-a716-446655440000';
+    const sessionId = '01HRJ8XJPK0000000000000000';
 
     beforeEach(async () => {
       const now = new Date();
@@ -370,7 +370,7 @@ describe('Events API', () => {
       // Act
       const response = await context.app.inject({
         method: 'GET',
-        url: '/api/events/session/550e8400-e29b-41d4-a716-446655440099',
+        url: '/api/events/session/01HRJ8XJPK0000000000000099',
       });
 
       // Assert
@@ -410,8 +410,8 @@ describe('Events API', () => {
   });
 
   describe('GET /api/events - 이벤트 목록 조회 (필터링)', () => {
-    const sessionId1 = '550e8400-e29b-41d4-a716-446655440000';
-    const sessionId2 = '550e8400-e29b-41d4-a716-446655440001';
+    const sessionId1 = '01HRJ8XJPK0000000000000000';
+    const sessionId2 = '01HRJ8XJPK0000000000000001';
 
     beforeEach(async () => {
       const now = new Date();

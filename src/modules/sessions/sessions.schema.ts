@@ -1,5 +1,5 @@
-// UUID v4 패턴
-const UUID_PATTERN = '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$';
+// ULID 패턴 (Crockford Base32: 0-9, A-H, J-K, M-N, P-T, V-Z, 대소문자 허용)
+const ULID_PATTERN = '^[0-9A-HJ-KM-NP-TV-Za-hj-km-np-tv-z]{26}$';
 // 안전한 ID 패턴 (NoSQL Injection 방지)
 const SAFE_ID_PATTERN = '^[a-zA-Z0-9_-]+$';
 // 국가 코드 패턴
@@ -126,7 +126,7 @@ export const createSessionSchema = {
     type: 'object',
     required: ['sessionId', 'kioskId', 'storeId', 'groupId', 'countryCode', 'kioskVersion', 'launcherVersion'],
     properties: {
-      sessionId: { type: 'string', pattern: UUID_PATTERN },
+      sessionId: { type: 'string', pattern: ULID_PATTERN },
       kioskId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
       storeId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
       groupId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
@@ -144,7 +144,7 @@ export const getSessionSchema = {
     type: 'object',
     required: ['sessionId'],
     properties: {
-      sessionId: { type: 'string', pattern: UUID_PATTERN },
+      sessionId: { type: 'string', pattern: ULID_PATTERN },
     },
   },
 };
@@ -155,7 +155,7 @@ export const updateSessionSchema = {
     type: 'object',
     required: ['sessionId'],
     properties: {
-      sessionId: { type: 'string', pattern: UUID_PATTERN },
+      sessionId: { type: 'string', pattern: ULID_PATTERN },
     },
   },
   body: {

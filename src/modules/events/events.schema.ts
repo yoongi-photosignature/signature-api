@@ -1,5 +1,5 @@
-// UUID v4 패턴
-const UUID_PATTERN = '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$';
+// ULID 패턴 (Crockford Base32: 0-9, A-H, J-K, M-N, P-T, V-Z, 대소문자 허용)
+const ULID_PATTERN = '^[0-9A-HJ-KM-NP-TV-Za-hj-km-np-tv-z]{26}$';
 // 안전한 ID 패턴 (NoSQL Injection 방지)
 const SAFE_ID_PATTERN = '^[a-zA-Z0-9_-]+$';
 
@@ -16,7 +16,7 @@ const eventSchema = {
   required: ['timestamp', 'sessionId', 'sequenceNo', 'eventType', 'screenName'],
   properties: {
     timestamp: { type: 'string', format: 'date-time' },
-    sessionId: { type: 'string', pattern: UUID_PATTERN },
+    sessionId: { type: 'string', pattern: ULID_PATTERN },
     sequenceNo: { type: 'integer', minimum: 0 },
     eventType: { type: 'string', enum: eventTypeEnum },
     screenName: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
@@ -73,7 +73,7 @@ export const getSessionEventsSchema = {
     type: 'object',
     required: ['sessionId'],
     properties: {
-      sessionId: { type: 'string', pattern: UUID_PATTERN },
+      sessionId: { type: 'string', pattern: ULID_PATTERN },
     },
   },
 };
@@ -83,7 +83,7 @@ export const listEventsSchema = {
   querystring: {
     type: 'object',
     properties: {
-      sessionId: { type: 'string', pattern: UUID_PATTERN },
+      sessionId: { type: 'string', pattern: ULID_PATTERN },
       kioskId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
       eventType: { type: 'string', enum: eventTypeEnum },
       startTime: { type: 'string', format: 'date-time' },

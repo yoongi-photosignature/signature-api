@@ -51,7 +51,7 @@ describe('Errors API', () => {
 
     it('sessionId를 포함하여 기록할 수 있어야 함', async () => {
       // Arrange
-      const sessionId = '550e8400-e29b-41d4-a716-446655440000';
+      const sessionId = '01HRJ8XJPK0000000000000000';
       const errorInput = {
         kioskId: 'DEV001',
         timestamp: new Date().toISOString(),
@@ -345,8 +345,8 @@ describe('Errors API', () => {
   });
 
   describe('GET /api/errors - 에러 목록 조회', () => {
-    const sessionId1 = '550e8400-e29b-41d4-a716-446655440000';
-    const sessionId2 = '550e8400-e29b-41d4-a716-446655440001';
+    const sessionId1 = '01HRJ8XJPK0000000000000000';
+    const sessionId2 = '01HRJ8XJPK0000000000000001';
 
     beforeEach(async () => {
       const now = new Date();
