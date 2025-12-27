@@ -84,13 +84,22 @@ export function setupErrorHandler(app: FastifyInstance): void {
   const isProduction = process.env.NODE_ENV === 'production';
 
   app.setErrorHandler((error: FastifyError, request: FastifyRequest, reply: FastifyReply) => {
+    const statusCode = error.statusCode || 500;
+
     // 에러 로깅 (내부용 - 전체 정보)
-    app.log.error({
+    const logData: Record<string, unknown> = {
       err: error,
       requestId: request.id,
       method: request.method,
       url: request.url,
-    });
+    };
+
+    // 400 에러일 때 요청 body 로깅 (디버깅용)
+    if (statusCode === 400 && request.body) {
+      logData.requestBody = request.body;
+    }
+
+    app.log.error(logData);
 
     const safeError = createSafeErrorResponse(error, isProduction);
 
