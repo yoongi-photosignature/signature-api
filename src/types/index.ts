@@ -613,7 +613,7 @@ export interface SessionDocument {
   behaviorSummary: BehaviorSummary;
   screenDurations: Record<string, number>;
   experiments?: Record<string, string>;
-  metadata: {
+  metadata?: {
     osVersion: string;
     screenResolution: string;
   };
@@ -630,7 +630,7 @@ export interface CreateSessionInput {
   countryCode: string;
   kioskVersion: string;
   launcherVersion: string;
-  metadata: {
+  metadata?: {
     osVersion: string;
     screenResolution: string;
   };

@@ -165,7 +165,7 @@ const popupsValidator = {
 const sessionsValidator = {
   $jsonSchema: {
     bsonType: "object",
-    required: ["sessionId", "kioskId", "storeId", "groupId", "countryCode", "kioskVersion", "launcherVersion", "startedAt", "status", "funnel", "selections", "behaviorSummary", "metadata", "createdAt", "updatedAt"],
+    required: ["sessionId", "kioskId", "storeId", "groupId", "countryCode", "kioskVersion", "launcherVersion", "startedAt", "status", "funnel", "selections", "behaviorSummary", "createdAt", "updatedAt"],
     properties: {
       sessionId: { bsonType: "string" },
       kioskId: { bsonType: "string" },

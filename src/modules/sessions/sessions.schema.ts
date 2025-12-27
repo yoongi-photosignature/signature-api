@@ -124,7 +124,7 @@ const metadataSchema = {
 export const createSessionSchema = {
   body: {
     type: 'object',
-    required: ['sessionId', 'kioskId', 'storeId', 'groupId', 'countryCode', 'kioskVersion', 'launcherVersion', 'metadata'],
+    required: ['sessionId', 'kioskId', 'storeId', 'groupId', 'countryCode', 'kioskVersion', 'launcherVersion'],
     properties: {
       sessionId: { type: 'string', pattern: UUID_PATTERN },
       kioskId: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 50 },
