@@ -31,9 +31,11 @@ const CERT_PATH = process.env.MONGODB_CERT_PATH;
 const salesValidator = {
   $jsonSchema: {
     bsonType: "object",
-    required: ["timestamp", "store", "device", "country", "amount", "currency", "amountKRW", "payment", "status", "product"],
+    required: ["timestamp", "sessionId", "transactionId", "store", "kiosk", "country", "amount", "currency", "amountKRW", "payment", "status", "product"],
     properties: {
       timestamp: { bsonType: "date" },
+      sessionId: { bsonType: "string" },
+      transactionId: { bsonType: "string" },
       store: {
         bsonType: "object",
         required: ["id", "name"],
@@ -44,7 +46,7 @@ const salesValidator = {
           groupName: { bsonType: "string" }
         }
       },
-      device: {
+      kiosk: {
         bsonType: "object",
         required: ["id", "name"],
         properties: {
@@ -73,10 +75,11 @@ const salesValidator = {
       },
       product: {
         bsonType: "object",
-        required: ["type", "frameCategory"],
+        required: ["type", "frameFormat", "frameDesign"],
         properties: {
           type: { enum: ["PHOTO", "BEAUTY", "AI", "FORTUNE"] },
-          frameCategory: { enum: ["3CUT", "4CUT", "6CUT", "8CUT"] }
+          frameFormat: { enum: ["3CUT", "4CUT", "6CUT", "8CUT"] },
+          frameDesign: { bsonType: "string" }
         }
       },
       discount: {

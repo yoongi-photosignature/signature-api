@@ -92,6 +92,61 @@ feat: 카메라 기능 추가 (feat/camera)
 ## Project Overview
 A REST API server that acts as a middleware layer between PhotoSignature kiosks and MongoDB Atlas. This service manages connection pooling for ~1000 kiosks, handles CRUD operations for sales transactions, stores, devices, popups, and exchange rates.
 
+
+### How It Works (Big Picture)
+
+```
+┌───────────────────────────────────┐      ┌────────────────────────────────────────┐
+│            Kiosk PC               │      │         Kiosk Web Application          │
+│     THIS PROJECT ↓                │      │  https://photosignature-kiosk.web.app  │
+│  ┌─────────────────────────────┐  │      │            (Firebase Hosting)          │
+│  │ ★ Signature Launcher        │  │      │                  (UI)                  │
+│  │  ┌───────────┐ ┌──────────┐ │  │      │                                        │
+│  │  │ Electron  │ │ FastAPI  │ │  │      │                                        │
+│  │  │ (Wrapper) │ │ Backend  │ │◀─┼──────┼──────────────── REST API ──────────────│
+│  │  └───────────┘ │(Hardware)│ │  │      │                                        │
+│  │       │        └──────────┘ │  │      └────────────────────────────────────────┘
+│  │       │ opens chrome --kiosk│  │                          │
+│  │       └─────────────────────┼──┼──────────────────────────┘
+│  └─────────────────────────────┘  │
+└───────────────────────────────────┘
+                 │
+                 │ HTTPS
+                 ▼
+   ┌─────────────────────────┐
+   │    GCP API Gateway      │
+   └─────────────────────────┘
+                 │
+                 ▼
+   ┌─────────────────────────┐
+   │     Signature API       │
+   │    (GCP Cloud Run)      │
+   └─────────────────────────┘
+                 │
+                 ▼
+   ┌─────────────────────────┐
+   │        MongoDB          │
+   └─────────────────────────┘
+```
+
+### Terminology
+
+| Term | Description |
+|------|-------------|
+| **Signature Launcher** | Kiosk launcher application. Electron app wrapping FastAPI backend for hardware control. Opens Kiosk Web Application in `chrome --kiosk` mode. Communicates with Signature API server. |
+| **Kiosk Web Application** | https://photosignature-kiosk.web.app (Firebase Hosting). UI layer of the kiosk. Sends hardware API requests to Signature Launcher. |
+| **Kiosk** | Combined system of "Signature Launcher + Kiosk Web Application". Handles photo capture, printing, and payment. Launcher controls hardware; Kiosk Web Application provides user-facing UI. |
+| **Signature API** | Backend API server connected to MongoDB. Runs on GCP Cloud Run behind GCP API Gateway. Receives requests from Signature Launcher for recording payments, metrics, etc. |
+
+### Data Flow
+
+1. User interacts with **Kiosk Web Application** (UI)
+2. Kiosk Web Application sends hardware requests to **Signature Launcher** (localhost API)
+3. Signature Launcher controls hardware (camera, printer, payment terminal)
+4. Signature Launcher sends data to **Signature API** (via GCP API Gateway)
+5. Signature API persists data to **MongoDB**
+
+
 ### Architecture
 ```
 Kiosks (1000+) → GCP API Gateway (x-api-key 인증) → Cloud Run → MongoDB Atlas
