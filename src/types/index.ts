@@ -600,7 +600,8 @@ export interface SessionDocument {
   storeId: string;
   groupId: string;
   countryCode: string;
-  appVersion: string;
+  kioskVersion: string;
+  launcherVersion: string;
   startedAt: Date;
   endedAt: Date | null;
   durationMs: number | null;
@@ -627,7 +628,8 @@ export interface CreateSessionInput {
   storeId: string;
   groupId: string;
   countryCode: string;
-  appVersion: string;
+  kioskVersion: string;
+  launcherVersion: string;
   metadata: {
     osVersion: string;
     screenResolution: string;

@@ -162,6 +162,36 @@ const popupsValidator = {
   }
 };
 
+const sessionsValidator = {
+  $jsonSchema: {
+    bsonType: "object",
+    required: ["sessionId", "kioskId", "storeId", "groupId", "countryCode", "kioskVersion", "launcherVersion", "startedAt", "status", "funnel", "selections", "behaviorSummary", "metadata", "createdAt", "updatedAt"],
+    properties: {
+      sessionId: { bsonType: "string" },
+      kioskId: { bsonType: "string" },
+      storeId: { bsonType: "string" },
+      groupId: { bsonType: "string" },
+      countryCode: { bsonType: "string" },
+      kioskVersion: { bsonType: "string" },
+      launcherVersion: { bsonType: "string" },
+      startedAt: { bsonType: "date" },
+      endedAt: { bsonType: ["date", "null"] },
+      durationMs: { bsonType: ["int", "long", "null"] },
+      status: { enum: ["started", "in_progress", "completed", "abandoned", "timeout", "payment_failed", "error"] },
+      funnel: { bsonType: "object" },
+      exitContext: { bsonType: "object" },
+      selections: { bsonType: "object" },
+      payment: { bsonType: "object" },
+      behaviorSummary: { bsonType: "object" },
+      screenDurations: { bsonType: "object" },
+      experiments: { bsonType: "object" },
+      metadata: { bsonType: "object" },
+      createdAt: { bsonType: "date" },
+      updatedAt: { bsonType: "date" }
+    }
+  }
+};
+
 // ============================================================
 // Collection Definitions
 // ============================================================
@@ -196,6 +226,12 @@ const collections = [
   {
     name: 'config',
     validator: null
+  },
+  {
+    name: 'sessions',
+    validator: sessionsValidator,
+    validationLevel: 'moderate',
+    validationAction: 'warn'  // warn으로 설정하여 기존 데이터와 호환성 유지
   }
 ];
 
@@ -218,7 +254,13 @@ const indexes = [
 
   // popups indexes (2)
   { collection: 'popups', keys: { status: 1 }, name: 'idx_popups_status' },
-  { collection: 'popups', keys: { "character.id": 1 }, name: 'idx_popups_character' }
+  { collection: 'popups', keys: { "character.id": 1 }, name: 'idx_popups_character' },
+
+  // sessions indexes (4)
+  { collection: 'sessions', keys: { sessionId: 1 }, name: 'idx_sessions_sessionId', unique: true },
+  { collection: 'sessions', keys: { kioskId: 1, startedAt: -1 }, name: 'idx_sessions_kiosk_started' },
+  { collection: 'sessions', keys: { storeId: 1, startedAt: -1 }, name: 'idx_sessions_store_started' },
+  { collection: 'sessions', keys: { status: 1, startedAt: -1 }, name: 'idx_sessions_status_started' }
 ];
 
 // ============================================================
@@ -321,7 +363,9 @@ async function createIndexes(db) {
       console.log(`  [DRY-RUN] Would create index ${idx.name} on ${idx.collection}`);
     } else {
       try {
-        await collection.createIndex(idx.keys, { name: idx.name, background: true });
+        const indexOptions = { name: idx.name, background: true };
+        if (idx.unique) indexOptions.unique = true;
+        await collection.createIndex(idx.keys, indexOptions);
         console.log(`  [CREATE] ${idx.collection}.${idx.name}`);
       } catch (err) {
         if (err.code === 85 || err.code === 86) {
