@@ -39,7 +39,7 @@ describe('Stores API', () => {
             serverFeeRate: 0.30,
             vatEnabled: true,
           },
-          devices: ['device-001', 'device-002'],
+          kiosks: ['kiosk-001', 'kiosk-002'],
           createdAt: now,
           updatedAt: now,
         },
@@ -60,7 +60,7 @@ describe('Stores API', () => {
             serverFeeRate: 0.35,
             vatEnabled: true,
           },
-          devices: ['device-003'],
+          kiosks: ['kiosk-003'],
           createdAt: now,
           updatedAt: now,
         },
@@ -81,7 +81,7 @@ describe('Stores API', () => {
             serverFeeRate: 0.30,
             vatEnabled: false,
           },
-          devices: ['device-004'],
+          kiosks: ['kiosk-004'],
           createdAt: now,
           updatedAt: now,
         },
@@ -190,7 +190,7 @@ describe('Stores API', () => {
           serverFeeRate: 0.30,
           vatEnabled: true,
         },
-        devices: ['device-001', 'device-002'],
+        kiosks: ['kiosk-001', 'kiosk-002'],
         createdAt: new Date(),
         updatedAt: new Date(),
       });
@@ -209,7 +209,7 @@ describe('Stores API', () => {
       expect(body.success).toBe(true);
       expect(body.data._id).toBe('store-detail-001');
       expect(body.data.name).toBe('상세 조회용 매장');
-      expect(body.data.devices).toEqual(['device-001', 'device-002']);
+      expect(body.data.kiosks).toEqual(['kiosk-001', 'kiosk-002']);
       expect(body.data.owner.phone).toBe('010-9999-8888');
     });
 
@@ -252,7 +252,7 @@ describe('Stores API', () => {
           serverFeeRate: 0.30,
           vatEnabled: true,
         },
-        devices: [],
+        kiosks: [],
       };
 
       // Act
@@ -271,7 +271,7 @@ describe('Stores API', () => {
       const inserted = await context.db.collection('stores').findOne({ _id: 'store-new-001' });
       expect(inserted).toBeDefined();
       expect(inserted?.name).toBe('신규 매장');
-      expect(inserted?.devices).toEqual([]);
+      expect(inserted?.kiosks).toEqual([]);
     });
 
     it('owner 정보 없이 매장을 생성할 수 있어야 함', async () => {
@@ -311,10 +311,10 @@ describe('Stores API', () => {
       expect(inserted?.owner == null).toBe(true);
     });
 
-    it('devices 배열이 없으면 빈 배열로 초기화되어야 함', async () => {
+    it('kiosks 배열이 없으면 빈 배열로 초기화되어야 함', async () => {
       // Arrange
       const newStore = {
-        _id: 'store-no-devices',
+        _id: 'store-no-kiosks',
         name: '기기 없는 매장',
         group: {
           id: 'group-001',
@@ -342,8 +342,8 @@ describe('Stores API', () => {
       // Assert
       expect(response.statusCode).toBe(201);
 
-      const inserted = await context.db.collection('stores').findOne({ _id: 'store-no-devices' });
-      expect(inserted?.devices).toEqual([]);
+      const inserted = await context.db.collection('stores').findOne({ _id: 'store-no-kiosks' });
+      expect(inserted?.kiosks).toEqual([]);
     });
   });
 
@@ -366,7 +366,7 @@ describe('Stores API', () => {
           serverFeeRate: 0.30,
           vatEnabled: true,
         },
-        devices: ['device-001'],
+        kiosks: ['kiosk-001'],
         createdAt: new Date(),
         updatedAt: new Date(),
       });
@@ -413,13 +413,13 @@ describe('Stores API', () => {
       expect(updated?.settlement.vatEnabled).toBe(false);
     });
 
-    it('기기 목록을 수정해야 함', async () => {
+    it('키오스크 목록을 수정해야 함', async () => {
       // Act
       const response = await context.app.inject({
         method: 'PUT',
         url: '/api/stores/store-to-update',
         payload: {
-          devices: ['device-001', 'device-002', 'device-003'],
+          kiosks: ['kiosk-001', 'kiosk-002', 'kiosk-003'],
         },
       });
 
@@ -427,7 +427,7 @@ describe('Stores API', () => {
       expect(response.statusCode).toBe(200);
 
       const updated = await context.db.collection('stores').findOne({ _id: 'store-to-update' });
-      expect(updated?.devices).toEqual(['device-001', 'device-002', 'device-003']);
+      expect(updated?.kiosks).toEqual(['kiosk-001', 'kiosk-002', 'kiosk-003']);
     });
 
     it('점주 정보를 추가해야 함', async () => {
@@ -486,7 +486,7 @@ describe('Stores API', () => {
           serverFeeRate: 0.30,
           vatEnabled: true,
         },
-        devices: [],
+        kiosks: [],
         createdAt: new Date(),
         updatedAt: new Date(),
       });

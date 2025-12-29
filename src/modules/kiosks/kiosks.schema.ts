@@ -2,7 +2,7 @@
 const SAFE_ID_PATTERN = '^[a-zA-Z0-9_-]+$';
 const COUNTRY_CODE_PATTERN = '^[A-Z]{2,3}$';
 
-export const getDevicesSchema = {
+export const getKiosksSchema = {
   querystring: {
     type: 'object',
     properties: {
@@ -12,7 +12,7 @@ export const getDevicesSchema = {
   },
 };
 
-export const getDeviceByIdSchema = {
+export const getKioskByIdSchema = {
   params: {
     type: 'object',
     required: ['id'],
@@ -22,7 +22,7 @@ export const getDeviceByIdSchema = {
   },
 };
 
-export const createDeviceSchema = {
+export const createKioskSchema = {
   body: {
     type: 'object',
     required: ['_id', 'name', 'store', 'country', 'programType'],
@@ -52,7 +52,7 @@ export const createDeviceSchema = {
   },
 };
 
-export const updateDeviceSchema = {
+export const updateKioskSchema = {
   params: {
     type: 'object',
     required: ['id'],

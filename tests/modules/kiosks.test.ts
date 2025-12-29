@@ -1,26 +1,26 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { createTestApp, closeTestApp, TestContext } from '../helpers/test-app.js';
-import { devicesRoutes } from '../../src/modules/devices/devices.routes.js';
-import { DeviceDocument } from '../../src/types/index.js';
+import { kiosksRoutes } from '../../src/modules/kiosks/kiosks.routes.js';
+import { KioskDocument } from '../../src/types/index.js';
 
-describe('Devices API', () => {
+describe('Kiosks API', () => {
   let context: TestContext;
 
   beforeEach(async () => {
     context = await createTestApp();
-    await context.app.register(devicesRoutes, { prefix: '/api/devices' });
+    await context.app.register(kiosksRoutes, { prefix: '/api/kiosks' });
   });
 
   afterEach(async () => {
     await closeTestApp(context);
   });
 
-  describe('GET /api/devices - 기기 목록 조회', () => {
+  describe('GET /api/kiosks - 키오스크 목록 조회', () => {
     beforeEach(async () => {
       const now = new Date();
-      const testDevices: DeviceDocument[] = [
+      const testKiosks: KioskDocument[] = [
         {
-          _id: 'device-kr-001',
+          _id: 'kiosk-kr-001',
           name: '강남점 1호기',
           hddSerial: 'HDD-KR-001',
           store: {
@@ -37,7 +37,7 @@ describe('Devices API', () => {
           updatedAt: now,
         },
         {
-          _id: 'device-kr-002',
+          _id: 'kiosk-kr-002',
           name: '강남점 2호기',
           hddSerial: 'HDD-KR-002',
           store: {
@@ -54,7 +54,7 @@ describe('Devices API', () => {
           updatedAt: now,
         },
         {
-          _id: 'device-jp-001',
+          _id: 'kiosk-jp-001',
           name: '도쿄 시부야점 1호기',
           hddSerial: 'HDD-JP-001',
           store: {
@@ -72,14 +72,14 @@ describe('Devices API', () => {
         },
       ];
 
-      await context.db.collection('devices').insertMany(testDevices);
+      await context.db.collection('kiosks').insertMany(testKiosks);
     });
 
-    it('전체 기기 목록을 반환해야 함', async () => {
+    it('전체 키오스크 목록을 반환해야 함', async () => {
       // Act
       const response = await context.app.inject({
         method: 'GET',
-        url: '/api/devices',
+        url: '/api/kiosks',
       });
 
       // Assert
@@ -94,7 +94,7 @@ describe('Devices API', () => {
       // Act
       const response = await context.app.inject({
         method: 'GET',
-        url: '/api/devices?storeId=store-kr-001',
+        url: '/api/kiosks?storeId=store-kr-001',
       });
 
       // Assert
@@ -109,7 +109,7 @@ describe('Devices API', () => {
       // Act
       const response = await context.app.inject({
         method: 'GET',
-        url: '/api/devices?country=KR',
+        url: '/api/kiosks?country=KR',
       });
 
       // Assert
@@ -123,25 +123,25 @@ describe('Devices API', () => {
       // Act
       const response = await context.app.inject({
         method: 'GET',
-        url: '/api/devices?country=JP',
+        url: '/api/kiosks?country=JP',
       });
 
       // Assert
       expect(response.statusCode).toBe(200);
       const body = JSON.parse(response.body);
       expect(body.data).toHaveLength(1);
-      expect(body.data[0]._id).toBe('device-jp-001');
+      expect(body.data[0]._id).toBe('kiosk-jp-001');
       expect(body.data[0].country.code).toBe('JP');
     });
 
-    it('기기가 없을 때 빈 배열을 반환해야 함', async () => {
+    it('키오스크가 없을 때 빈 배열을 반환해야 함', async () => {
       // Arrange
-      await context.db.collection('devices').deleteMany({});
+      await context.db.collection('kiosks').deleteMany({});
 
       // Act
       const response = await context.app.inject({
         method: 'GET',
-        url: '/api/devices',
+        url: '/api/kiosks',
       });
 
       // Assert
@@ -152,11 +152,11 @@ describe('Devices API', () => {
     });
   });
 
-  describe('GET /api/devices/:id - 기기 상세 조회', () => {
+  describe('GET /api/kiosks/:id - 키오스크 상세 조회', () => {
     beforeEach(async () => {
-      await context.db.collection('devices').insertOne({
-        _id: 'device-detail-001',
-        name: '상세 조회용 기기',
+      await context.db.collection('kiosks').insertOne({
+        _id: 'kiosk-detail-001',
+        name: '상세 조회용 키오스크',
         hddSerial: 'HDD-DETAIL-001',
         store: {
           id: 'store-001',
@@ -173,28 +173,28 @@ describe('Devices API', () => {
       });
     });
 
-    it('존재하는 기기 ID로 조회 시 상세 정보를 반환해야 함', async () => {
+    it('존재하는 키오스크 ID로 조회 시 상세 정보를 반환해야 함', async () => {
       // Act
       const response = await context.app.inject({
         method: 'GET',
-        url: '/api/devices/device-detail-001',
+        url: '/api/kiosks/kiosk-detail-001',
       });
 
       // Assert
       expect(response.statusCode).toBe(200);
       const body = JSON.parse(response.body);
       expect(body.success).toBe(true);
-      expect(body.data._id).toBe('device-detail-001');
-      expect(body.data.name).toBe('상세 조회용 기기');
+      expect(body.data._id).toBe('kiosk-detail-001');
+      expect(body.data.name).toBe('상세 조회용 키오스크');
       expect(body.data.hddSerial).toBe('HDD-DETAIL-001');
       expect(body.data.store.id).toBe('store-001');
     });
 
-    it('존재하지 않는 기기 ID로 조회 시 404를 반환해야 함', async () => {
+    it('존재하지 않는 키오스크 ID로 조회 시 404를 반환해야 함', async () => {
       // Act
       const response = await context.app.inject({
         method: 'GET',
-        url: '/api/devices/non-existent-device',
+        url: '/api/kiosks/non-existent-kiosk',
       });
 
       // Assert
@@ -202,16 +202,16 @@ describe('Devices API', () => {
       const body = JSON.parse(response.body);
       expect(body.success).toBe(false);
       expect(body.error.code).toBe('NOT_FOUND');
-      expect(body.error.message).toBe('Device not found');
+      expect(body.error.message).toBe('Kiosk not found');
     });
   });
 
-  describe('POST /api/devices - 기기 등록', () => {
-    it('유효한 데이터로 기기를 등록해야 함', async () => {
+  describe('POST /api/kiosks - 키오스크 등록', () => {
+    it('유효한 데이터로 키오스크를 등록해야 함', async () => {
       // Arrange
-      const newDevice = {
-        _id: 'device-new-001',
-        name: '신규 기기',
+      const newKiosk = {
+        _id: 'kiosk-new-001',
+        name: '신규 키오스크',
         hddSerial: 'HDD-NEW-001',
         store: {
           id: 'store-001',
@@ -228,27 +228,27 @@ describe('Devices API', () => {
       // Act
       const response = await context.app.inject({
         method: 'POST',
-        url: '/api/devices',
-        payload: newDevice,
+        url: '/api/kiosks',
+        payload: newKiosk,
       });
 
       // Assert
       expect(response.statusCode).toBe(201);
       const body = JSON.parse(response.body);
       expect(body.success).toBe(true);
-      expect(body.data.id).toBe('device-new-001');
+      expect(body.data.id).toBe('kiosk-new-001');
 
-      const inserted = await context.db.collection('devices').findOne({ _id: 'device-new-001' });
+      const inserted = await context.db.collection('kiosks').findOne({ _id: 'kiosk-new-001' });
       expect(inserted).toBeDefined();
-      expect(inserted?.name).toBe('신규 기기');
+      expect(inserted?.name).toBe('신규 키오스크');
       expect(inserted?.hddSerial).toBe('HDD-NEW-001');
     });
 
-    it('hddSerial 없이 기기를 등록할 수 있어야 함', async () => {
+    it('hddSerial 없이 키오스크를 등록할 수 있어야 함', async () => {
       // Arrange
-      const newDevice = {
-        _id: 'device-no-serial',
-        name: 'HDD 시리얼 없는 기기',
+      const newKiosk = {
+        _id: 'kiosk-no-serial',
+        name: 'HDD 시리얼 없는 키오스크',
         store: {
           id: 'store-001',
           name: '테스트 매장',
@@ -264,60 +264,60 @@ describe('Devices API', () => {
       // Act
       const response = await context.app.inject({
         method: 'POST',
-        url: '/api/devices',
-        payload: newDevice,
+        url: '/api/kiosks',
+        payload: newKiosk,
       });
 
       // Assert
       expect(response.statusCode).toBe(201);
 
-      const inserted = await context.db.collection('devices').findOne({ _id: 'device-no-serial' });
+      const inserted = await context.db.collection('kiosks').findOne({ _id: 'kiosk-no-serial' });
       expect(inserted).toBeDefined();
       // hddSerial이 없으면 undefined 또는 null일 수 있음
       expect(inserted?.hddSerial == null).toBe(true);
     });
 
-    it('다양한 programType으로 기기를 등록할 수 있어야 함', async () => {
+    it('다양한 programType으로 키오스크를 등록할 수 있어야 함', async () => {
       // Arrange
-      const devices = [
+      const kiosks = [
         {
-          _id: 'device-v2',
-          name: 'V2 기기',
+          _id: 'kiosk-v2',
+          name: 'V2 키오스크',
           store: { id: 'store-001', name: '매장' },
           country: { code: 'KR', name: '한국', currency: 'KRW' },
           programType: 'PHOTO_SIGNATURE_V2',
         },
         {
-          _id: 'device-v3',
-          name: 'V3 기기',
+          _id: 'kiosk-v3',
+          name: 'V3 키오스크',
           store: { id: 'store-001', name: '매장' },
           country: { code: 'KR', name: '한국', currency: 'KRW' },
           programType: 'PHOTO_SIGNATURE_V3',
         },
       ];
 
-      for (const device of devices) {
+      for (const kiosk of kiosks) {
         // Act
         const response = await context.app.inject({
           method: 'POST',
-          url: '/api/devices',
-          payload: device,
+          url: '/api/kiosks',
+          payload: kiosk,
         });
 
         // Assert
         expect(response.statusCode).toBe(201);
       }
 
-      const count = await context.db.collection('devices').countDocuments();
+      const count = await context.db.collection('kiosks').countDocuments();
       expect(count).toBe(2);
     });
   });
 
-  describe('PUT /api/devices/:id - 기기 수정', () => {
+  describe('PUT /api/kiosks/:id - 키오스크 수정', () => {
     beforeEach(async () => {
-      await context.db.collection('devices').insertOne({
-        _id: 'device-to-update',
-        name: '수정할 기기',
+      await context.db.collection('kiosks').insertOne({
+        _id: 'kiosk-to-update',
+        name: '수정할 키오스크',
         hddSerial: 'HDD-OLD',
         store: {
           id: 'store-001',
@@ -334,13 +334,13 @@ describe('Devices API', () => {
       });
     });
 
-    it('기기 이름을 수정해야 함', async () => {
+    it('키오스크 이름을 수정해야 함', async () => {
       // Act
       const response = await context.app.inject({
         method: 'PUT',
-        url: '/api/devices/device-to-update',
+        url: '/api/kiosks/kiosk-to-update',
         payload: {
-          name: '수정된 기기 이름',
+          name: '수정된 키오스크 이름',
         },
       });
 
@@ -350,15 +350,15 @@ describe('Devices API', () => {
       expect(body.success).toBe(true);
       expect(body.data.updated).toBe(true);
 
-      const updated = await context.db.collection('devices').findOne({ _id: 'device-to-update' });
-      expect(updated?.name).toBe('수정된 기기 이름');
+      const updated = await context.db.collection('kiosks').findOne({ _id: 'kiosk-to-update' });
+      expect(updated?.name).toBe('수정된 키오스크 이름');
     });
 
     it('HDD 시리얼을 수정해야 함', async () => {
       // Act
       const response = await context.app.inject({
         method: 'PUT',
-        url: '/api/devices/device-to-update',
+        url: '/api/kiosks/kiosk-to-update',
         payload: {
           hddSerial: 'HDD-NEW',
         },
@@ -367,7 +367,7 @@ describe('Devices API', () => {
       // Assert
       expect(response.statusCode).toBe(200);
 
-      const updated = await context.db.collection('devices').findOne({ _id: 'device-to-update' });
+      const updated = await context.db.collection('kiosks').findOne({ _id: 'kiosk-to-update' });
       expect(updated?.hddSerial).toBe('HDD-NEW');
     });
 
@@ -375,7 +375,7 @@ describe('Devices API', () => {
       // Act
       const response = await context.app.inject({
         method: 'PUT',
-        url: '/api/devices/device-to-update',
+        url: '/api/kiosks/kiosk-to-update',
         payload: {
           store: {
             id: 'store-002',
@@ -387,7 +387,7 @@ describe('Devices API', () => {
       // Assert
       expect(response.statusCode).toBe(200);
 
-      const updated = await context.db.collection('devices').findOne({ _id: 'device-to-update' });
+      const updated = await context.db.collection('kiosks').findOne({ _id: 'kiosk-to-update' });
       expect(updated?.store.id).toBe('store-002');
       expect(updated?.store.name).toBe('새로운 매장');
     });
@@ -396,7 +396,7 @@ describe('Devices API', () => {
       // Act
       const response = await context.app.inject({
         method: 'PUT',
-        url: '/api/devices/device-to-update',
+        url: '/api/kiosks/kiosk-to-update',
         payload: {
           programType: 'PHOTO_SIGNATURE_V3',
         },
@@ -405,7 +405,7 @@ describe('Devices API', () => {
       // Assert
       expect(response.statusCode).toBe(200);
 
-      const updated = await context.db.collection('devices').findOne({ _id: 'device-to-update' });
+      const updated = await context.db.collection('kiosks').findOne({ _id: 'kiosk-to-update' });
       expect(updated?.programType).toBe('PHOTO_SIGNATURE_V3');
     });
 
@@ -413,7 +413,7 @@ describe('Devices API', () => {
       // Act
       const response = await context.app.inject({
         method: 'PUT',
-        url: '/api/devices/device-to-update',
+        url: '/api/kiosks/kiosk-to-update',
         payload: {
           country: {
             code: 'JP',
@@ -426,16 +426,16 @@ describe('Devices API', () => {
       // Assert
       expect(response.statusCode).toBe(200);
 
-      const updated = await context.db.collection('devices').findOne({ _id: 'device-to-update' });
+      const updated = await context.db.collection('kiosks').findOne({ _id: 'kiosk-to-update' });
       expect(updated?.country.code).toBe('JP');
       expect(updated?.country.currency).toBe('JPY');
     });
 
-    it('존재하지 않는 기기 수정 시 404를 반환해야 함', async () => {
+    it('존재하지 않는 키오스크 수정 시 404를 반환해야 함', async () => {
       // Act
       const response = await context.app.inject({
         method: 'PUT',
-        url: '/api/devices/non-existent-device',
+        url: '/api/kiosks/non-existent-kiosk',
         payload: {
           name: '수정 시도',
         },
@@ -449,11 +449,11 @@ describe('Devices API', () => {
     });
   });
 
-  describe('DELETE /api/devices/:id - 기기 삭제', () => {
+  describe('DELETE /api/kiosks/:id - 키오스크 삭제', () => {
     beforeEach(async () => {
-      await context.db.collection('devices').insertOne({
-        _id: 'device-to-delete',
-        name: '삭제할 기기',
+      await context.db.collection('kiosks').insertOne({
+        _id: 'kiosk-to-delete',
+        name: '삭제할 키오스크',
         store: {
           id: 'store-001',
           name: '테스트 매장',
@@ -469,11 +469,11 @@ describe('Devices API', () => {
       });
     });
 
-    it('기기를 삭제해야 함', async () => {
+    it('키오스크를 삭제해야 함', async () => {
       // Act
       const response = await context.app.inject({
         method: 'DELETE',
-        url: '/api/devices/device-to-delete',
+        url: '/api/kiosks/kiosk-to-delete',
       });
 
       // Assert
@@ -482,15 +482,15 @@ describe('Devices API', () => {
       expect(body.success).toBe(true);
       expect(body.data.deleted).toBe(true);
 
-      const deleted = await context.db.collection('devices').findOne({ _id: 'device-to-delete' });
+      const deleted = await context.db.collection('kiosks').findOne({ _id: 'kiosk-to-delete' });
       expect(deleted).toBeNull();
     });
 
-    it('존재하지 않는 기기 삭제 시 404를 반환해야 함', async () => {
+    it('존재하지 않는 키오스크 삭제 시 404를 반환해야 함', async () => {
       // Act
       const response = await context.app.inject({
         method: 'DELETE',
-        url: '/api/devices/non-existent-device',
+        url: '/api/kiosks/non-existent-kiosk',
       });
 
       // Assert

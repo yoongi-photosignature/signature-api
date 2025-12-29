@@ -15,7 +15,7 @@ import { settlementRoutes } from './modules/settlement/settlement.routes.js';
 import { exchangeRatesRoutes } from './modules/exchange-rates/exchange-rates.routes.js';
 import { popupsRoutes } from './modules/popups/popups.routes.js';
 import { storesRoutes } from './modules/stores/stores.routes.js';
-import { devicesRoutes } from './modules/devices/devices.routes.js';
+import { kiosksRoutes } from './modules/kiosks/kiosks.routes.js';
 import { configRoutes } from './modules/config/config.routes.js';
 import { sessionsRoutes } from './modules/sessions/sessions.routes.js';
 import { eventsRoutes } from './modules/events/events.routes.js';
@@ -50,7 +50,7 @@ export async function buildApp(): Promise<FastifyInstance> {
   await app.register(exchangeRatesRoutes, { prefix: '/api/exchange-rates' });
   await app.register(popupsRoutes, { prefix: '/api/popups' });
   await app.register(storesRoutes, { prefix: '/api/stores' });
-  await app.register(devicesRoutes, { prefix: '/api/devices' });
+  await app.register(kiosksRoutes, { prefix: '/api/kiosks' });
   await app.register(configRoutes, { prefix: '/api/config' });
   await app.register(sessionsRoutes, { prefix: '/api/sessions' });
   await app.register(eventsRoutes, { prefix: '/api/events' });
@@ -78,7 +78,7 @@ export async function buildApp(): Promise<FastifyInstance> {
       exchangeRates: '/api/exchange-rates',
       popups: '/api/popups',
       stores: '/api/stores',
-      devices: '/api/devices',
+      kiosks: '/api/kiosks',
       config: '/api/config',
       sessions: '/api/sessions',
       events: '/api/events',

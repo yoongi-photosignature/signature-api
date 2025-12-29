@@ -1,35 +1,35 @@
 import { Collection, Db } from 'mongodb';
-import { DeviceDocument } from '../../types/index.js';
+import { KioskDocument } from '../../types/index.js';
 
-export class DevicesRepository {
-  private collection: Collection<DeviceDocument>;
+export class KiosksRepository {
+  private collection: Collection<KioskDocument>;
 
   constructor(db: Db) {
-    this.collection = db.collection('devices');
+    this.collection = db.collection('kiosks');
   }
 
-  async findAll(): Promise<DeviceDocument[]> {
+  async findAll(): Promise<KioskDocument[]> {
     return this.collection.find().sort({ name: 1 }).toArray();
   }
 
-  async findById(id: string): Promise<DeviceDocument | null> {
+  async findById(id: string): Promise<KioskDocument | null> {
     return this.collection.findOne({ _id: id });
   }
 
-  async findByStore(storeId: string): Promise<DeviceDocument[]> {
+  async findByStore(storeId: string): Promise<KioskDocument[]> {
     return this.collection.find({ 'store.id': storeId }).toArray();
   }
 
-  async findByCountry(countryCode: string): Promise<DeviceDocument[]> {
+  async findByCountry(countryCode: string): Promise<KioskDocument[]> {
     return this.collection.find({ 'country.code': countryCode }).toArray();
   }
 
-  async create(device: DeviceDocument): Promise<string> {
-    await this.collection.insertOne(device, { writeConcern: { w: 'majority' } });
-    return device._id;
+  async create(kiosk: KioskDocument): Promise<string> {
+    await this.collection.insertOne(kiosk, { writeConcern: { w: 'majority' } });
+    return kiosk._id;
   }
 
-  async update(id: string, data: Partial<DeviceDocument>): Promise<boolean> {
+  async update(id: string, data: Partial<KioskDocument>): Promise<boolean> {
     const result = await this.collection.updateOne(
       { _id: id },
       { $set: { ...data, updatedAt: new Date() } },

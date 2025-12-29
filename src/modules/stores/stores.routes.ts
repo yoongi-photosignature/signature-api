@@ -96,7 +96,7 @@ export const storesRoutes: FastifyPluginAsync = async (fastify) => {
           country: input.country,
           owner: input.owner,
           settlement: input.settlement,
-          devices: input.devices || [],
+          kiosks: input.kiosks || [],
           createdAt: now,
           updatedAt: now,
         };
@@ -140,7 +140,7 @@ export const storesRoutes: FastifyPluginAsync = async (fastify) => {
         if (input.country) updateData.country = input.country;
         if (input.owner) updateData.owner = input.owner;
         if (input.settlement) updateData.settlement = input.settlement;
-        if (input.devices) updateData.devices = input.devices;
+        if (input.kiosks) updateData.kiosks = input.kiosks;
 
         await repository.update(id, updateData);
 

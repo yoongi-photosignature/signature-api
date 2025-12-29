@@ -62,7 +62,7 @@ export const createStoreSchema = {
           vatEnabled: { type: 'boolean' },
         },
       },
-      devices: {
+      kiosks: {
         type: 'array',
         items: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 100 },
         maxItems: 100,
@@ -112,7 +112,7 @@ export const updateStoreSchema = {
           vatEnabled: { type: 'boolean' },
         },
       },
-      devices: {
+      kiosks: {
         type: 'array',
         items: { type: 'string', pattern: SAFE_ID_PATTERN, maxLength: 100 },
         maxItems: 100,

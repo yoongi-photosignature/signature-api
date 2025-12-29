@@ -1,14 +1,14 @@
 import { FastifyPluginAsync } from 'fastify';
-import { DevicesRepository } from './devices.repository.js';
+import { KiosksRepository } from './kiosks.repository.js';
 import {
-  getDevicesSchema,
-  getDeviceByIdSchema,
-  createDeviceSchema,
-  updateDeviceSchema,
-} from './devices.schema.js';
-import { CreateDeviceInput, UpdateDeviceInput, DeviceDocument } from '../../types/index.js';
+  getKiosksSchema,
+  getKioskByIdSchema,
+  createKioskSchema,
+  updateKioskSchema,
+} from './kiosks.schema.js';
+import { CreateKioskInput, UpdateKioskInput, KioskDocument } from '../../types/index.js';
 
-function serializeDevice(doc: DeviceDocument) {
+function serializeKiosk(doc: KioskDocument) {
   return {
     ...doc,
     createdAt: doc.createdAt.toISOString(),
@@ -16,80 +16,80 @@ function serializeDevice(doc: DeviceDocument) {
   };
 }
 
-export const devicesRoutes: FastifyPluginAsync = async (fastify) => {
-  const repository = new DevicesRepository(fastify.mongo.db);
+export const kiosksRoutes: FastifyPluginAsync = async (fastify) => {
+  const repository = new KiosksRepository(fastify.mongo.db);
 
-  // GET /api/devices - 기기 목록 조회
+  // GET /api/kiosks - 키오스크 목록 조회
   fastify.get<{ Querystring: { storeId?: string; country?: string } }>(
     '/',
-    { schema: getDevicesSchema },
+    { schema: getKiosksSchema },
     async (request, reply) => {
       try {
         const { storeId, country } = request.query;
 
-        let devices: DeviceDocument[];
+        let kiosks: KioskDocument[];
         if (storeId) {
-          devices = await repository.findByStore(storeId);
+          kiosks = await repository.findByStore(storeId);
         } else if (country) {
-          devices = await repository.findByCountry(country);
+          kiosks = await repository.findByCountry(country);
         } else {
-          devices = await repository.findAll();
+          kiosks = await repository.findAll();
         }
 
         return reply.send({
           success: true,
-          data: devices.map(serializeDevice),
-          meta: { count: devices.length },
+          data: kiosks.map(serializeKiosk),
+          meta: { count: kiosks.length },
         });
       } catch (error) {
         request.log.error(error);
         return reply.status(500).send({
           success: false,
-          error: { code: 'FETCH_FAILED', message: 'Failed to fetch devices' },
+          error: { code: 'FETCH_FAILED', message: 'Failed to fetch kiosks' },
         });
       }
     }
   );
 
-  // GET /api/devices/:id - 기기 상세 조회
+  // GET /api/kiosks/:id - 키오스크 상세 조회
   fastify.get<{ Params: { id: string } }>(
     '/:id',
-    { schema: getDeviceByIdSchema },
+    { schema: getKioskByIdSchema },
     async (request, reply) => {
       try {
-        const device = await repository.findById(request.params.id);
+        const kiosk = await repository.findById(request.params.id);
 
-        if (!device) {
+        if (!kiosk) {
           return reply.status(404).send({
             success: false,
-            error: { code: 'NOT_FOUND', message: 'Device not found' },
+            error: { code: 'NOT_FOUND', message: 'Kiosk not found' },
           });
         }
 
         return reply.send({
           success: true,
-          data: serializeDevice(device),
+          data: serializeKiosk(kiosk),
         });
       } catch (error) {
         request.log.error(error);
         return reply.status(500).send({
           success: false,
-          error: { code: 'FETCH_FAILED', message: 'Failed to fetch device' },
+          error: { code: 'FETCH_FAILED', message: 'Failed to fetch kiosk' },
         });
       }
     }
   );
 
-  // POST /api/devices - 기기 등록
-  fastify.post<{ Body: CreateDeviceInput }>(
+  // POST /api/kiosks - 키오스크 등록
+  fastify.post<{ Body: CreateKioskInput }>(
     '/',
-    { schema: createDeviceSchema },
+    { schema: createKioskSchema },
     async (request, reply) => {
       try {
         const input = request.body;
         const now = new Date();
 
-        const device: DeviceDocument = {
+        const kiosk: KioskDocument = {
           _id: input._id,
           name: input.name,
           hddSerial: input.hddSerial,
@@ -100,7 +100,7 @@ export const devicesRoutes: FastifyPluginAsync = async (fastify) => {
           updatedAt: now,
         };
 
-        const id = await repository.create(device);
+        const id = await repository.create(kiosk);
 
         return reply.status(201).send({
           success: true,
@@ -110,16 +110,16 @@ export const devicesRoutes: FastifyPluginAsync = async (fastify) => {
         request.log.error(error);
         return reply.status(500).send({
           success: false,
-          error: { code: 'CREATE_FAILED', message: 'Failed to create device' },
+          error: { code: 'CREATE_FAILED', message: 'Failed to create kiosk' },
         });
       }
     }
   );
 
-  // PUT /api/devices/:id - 기기 수정
-  fastify.put<{ Params: { id: string }; Body: UpdateDeviceInput }>(
+  // PUT /api/kiosks/:id - 키오스크 수정
+  fastify.put<{ Params: { id: string }; Body: UpdateKioskInput }>(
     '/:id',
-    { schema: updateDeviceSchema },
+    { schema: updateKioskSchema },
     async (request, reply) => {
       try {
         const { id } = request.params;
@@ -129,11 +129,11 @@ export const devicesRoutes: FastifyPluginAsync = async (fastify) => {
         if (!existing) {
           return reply.status(404).send({
             success: false,
-            error: { code: 'NOT_FOUND', message: 'Device not found' },
+            error: { code: 'NOT_FOUND', message: 'Kiosk not found' },
           });
         }
 
-        const updateData: Partial<DeviceDocument> = {};
+        const updateData: Partial<KioskDocument> = {};
         if (input.name) updateData.name = input.name;
         if (input.hddSerial) updateData.hddSerial = input.hddSerial;
         if (input.store) updateData.store = input.store;
@@ -150,16 +150,16 @@ export const devicesRoutes: FastifyPluginAsync = async (fastify) => {
         request.log.error(error);
         return reply.status(500).send({
           success: false,
-          error: { code: 'UPDATE_FAILED', message: 'Failed to update device' },
+          error: { code: 'UPDATE_FAILED', message: 'Failed to update kiosk' },
         });
       }
     }
   );
 
-  // DELETE /api/devices/:id - 기기 삭제
+  // DELETE /api/kiosks/:id - 키오스크 삭제
   fastify.delete<{ Params: { id: string } }>(
     '/:id',
-    { schema: getDeviceByIdSchema },
+    { schema: getKioskByIdSchema },
     async (request, reply) => {
       try {
         const { id } = request.params;
@@ -169,7 +169,7 @@ export const devicesRoutes: FastifyPluginAsync = async (fastify) => {
         if (!deleted) {
           return reply.status(404).send({
             success: false,
-            error: { code: 'NOT_FOUND', message: 'Device not found' },
+            error: { code: 'NOT_FOUND', message: 'Kiosk not found' },
           });
         }
 
@@ -181,7 +181,7 @@ export const devicesRoutes: FastifyPluginAsync = async (fastify) => {
         request.log.error(error);
         return reply.status(500).send({
           success: false,
-          error: { code: 'DELETE_FAILED', message: 'Failed to delete device' },
+          error: { code: 'DELETE_FAILED', message: 'Failed to delete kiosk' },
         });
       }
     }

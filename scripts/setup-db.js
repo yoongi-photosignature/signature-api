@@ -210,8 +210,8 @@ const collections = [
     validationAction: 'error'
   },
   {
-    name: 'devices',
-    validator: null // No strict validation for devices
+    name: 'kiosks',
+    validator: null // No strict validation for kiosks
   },
   {
     name: 'popups',
@@ -249,8 +249,8 @@ const indexes = [
   // stores indexes (1)
   { collection: 'stores', keys: { "country.code": 1 }, name: 'idx_stores_country' },
 
-  // devices indexes (1)
-  { collection: 'devices', keys: { "store.id": 1 }, name: 'idx_devices_store' },
+  // kiosks indexes (1)
+  { collection: 'kiosks', keys: { "store.id": 1 }, name: 'idx_kiosks_store' },
 
   // popups indexes (2)
   { collection: 'popups', keys: { status: 1 }, name: 'idx_popups_status' },

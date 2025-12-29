@@ -415,7 +415,7 @@ export interface StoreDocument {
     serverFeeRate: number;
     vatEnabled: boolean;
   };
-  devices: string[];
+  kiosks: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -440,7 +440,7 @@ export interface CreateStoreInput {
     serverFeeRate: number;
     vatEnabled: boolean;
   };
-  devices?: string[];
+  kiosks?: string[];
 }
 
 export interface UpdateStoreInput {
@@ -462,14 +462,14 @@ export interface UpdateStoreInput {
     serverFeeRate: number;
     vatEnabled: boolean;
   };
-  devices?: string[];
+  kiosks?: string[];
 }
 
 // ============================================================
-// Device Types
+// Kiosk Types
 // ============================================================
 
-export interface DeviceDocument {
+export interface KioskDocument {
   _id: string;
   name: string;
   hddSerial?: string;
@@ -487,7 +487,7 @@ export interface DeviceDocument {
   updatedAt: Date;
 }
 
-export interface CreateDeviceInput {
+export interface CreateKioskInput {
   _id: string;
   name: string;
   hddSerial?: string;
@@ -503,7 +503,7 @@ export interface CreateDeviceInput {
   programType: string;
 }
 
-export interface UpdateDeviceInput {
+export interface UpdateKioskInput {
   name?: string;
   hddSerial?: string;
   store?: {
